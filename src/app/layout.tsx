@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
-
+import { ThemeProvider } from "../components/theme-provider";
+import { inter, poppins, roboto, robotoMono } from "./fonts";
 export const metadata: Metadata = {
-  title: "Hello World",
-  description: "A simple Hello World app",
+  title: "Instant Mocks",
+  description: "",
 };
 
 export default function RootLayout({
@@ -12,8 +13,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`antialiased`}>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`${inter.variable} ${robotoMono.variable} ${roboto.variable} ${poppins.variable}`}
+      >
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
