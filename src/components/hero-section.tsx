@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Button } from "@/components/ui/button";
-import { ArrowRight01Icon } from "hugeicons-react";
+import { DashboardButton } from "@/components/ui/dashboard-button";
 import { AuroraBackground } from "./ui/aurora-background";
 import Link from "next/link";
 
@@ -79,13 +79,11 @@ export default function HeroSection() {
                   Features
                 </Button>
               </Link>
-              <Button
+              <DashboardButton
+                text="Get Started"
                 size="lg"
-                className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 text-primary-foreground cursor-pointer font-roboto-mono"
-              >
-                Get Started
-                <ArrowRight01Icon className="ml-2 h-5 w-5" />
-              </Button>
+                className="text-lg px-8 py-6 font-roboto-mono"
+              />
             </div>
           </div>
         </div>

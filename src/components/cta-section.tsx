@@ -3,13 +3,7 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Button } from "@/components/ui/button";
-import {
-  ArrowRight01Icon,
-  StarIcon,
-  UserIcon,
-  CodeIcon,
-} from "hugeicons-react";
+import { DashboardButton } from "@/components/ui/dashboard-button";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -69,17 +63,15 @@ export default function CTASection() {
       <div className="container mx-auto px-4">
         <div className="text-center max-w-4xl mx-auto">
           <div ref={contentRef}>
-            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6 font-poppins">
+            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6 font-poppins leading-snug">
               Ready to Accelerate Your Development?
             </h2>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Button
+              <DashboardButton
+                text="Start Building"
                 size="lg"
-                className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 text-primary-foreground cursor-pointer font-roboto-mono"
-              >
-                Start Building
-                <ArrowRight01Icon className="ml-2 h-5 w-5" />
-              </Button>
+                className="text-lg px-8 py-6 font-roboto-mono"
+              />
             </div>
           </div>
         </div>

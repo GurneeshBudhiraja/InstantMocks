@@ -3,7 +3,8 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { Button } from "@/components/ui/button";
-import { CodeIcon, GithubIcon } from "hugeicons-react";
+import { DashboardButton } from "@/components/ui/dashboard-button";
+import { GithubIcon } from "hugeicons-react";
 import Link from "next/link";
 
 export default function Navigation() {
@@ -53,12 +54,12 @@ export default function Navigation() {
     >
       <div className="container mx-auto px-2 font-roboto-mono">
         <div className="flex items-center justify-end h-16 gap-4">
-          <Button
+          <DashboardButton
+            text="Get Started"
             size="sm"
-            className="hidden md:flex bg-primary hover:bg-primary/90 cursor-pointer"
-          >
-            Get Started
-          </Button>
+            className="hidden md:flex"
+            showArrow={false}
+          />
           <Button
             size="sm"
             className="relative bg-black hover:bg-gray-800 cursor-pointer overflow-hidden group transition-all duration-300 border border-gray-700 hover:border-white/30"

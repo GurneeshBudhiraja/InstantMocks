@@ -17,7 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${robotoMono.variable} ${roboto.variable} ${poppins.variable} antialiased`}
+        className={`${inter.variable} ${robotoMono.variable} ${roboto.variable} ${poppins.variable} antialiased relative overflow-hidden`}
       >
         <ThemeProvider
           attribute="class"
