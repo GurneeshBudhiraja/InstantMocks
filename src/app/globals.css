@@ -8,14 +8,14 @@ html {
 }
 
 body {
-  @apply selection:bg-primary selection:text-primary-foreground;
+  @apply selection:bg-primary selection:text-primary-foreground box-border;
   background: var(--background);
   color: var(--foreground);
 }
 
 :root {
   /* shadcn variables - Clean minimalistic theme */
-  --background: #ffffff;
+  --background: #FAFAFA;
   --foreground: #1a1a1a;
   --card: #ffffff;
   --card-foreground: #1a1a1a;

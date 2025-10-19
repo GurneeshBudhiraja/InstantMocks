@@ -46,20 +46,20 @@ export default function HeroSection() {
     <AuroraBackground>
       <section
         ref={heroRef}
-        className="relative min-h-screen flex items-center justify-center overflow-hidden"
+        className="relative h-screen flex items-center justify-center overflow-hidden"
       >
         <div className="relative z-20 container mx-auto px-4 text-center">
           <div className="max-w-4xl mx-auto">
             <h1
               ref={titleRef}
-              className="text-5xl md:text-7xl font-bold text-foreground mb-6 leading-tight font-poppins"
+              className="text-5xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-zinc-700 to-zinc-900 mb-6 leading-tight font-poppins "
             >
-              <span className="text-primary">Instant</span>Mocks
+              <span>Instant</span>Mocks
             </h1>
 
             <p
               ref={subtitleRef}
-              className="text-xl  text-muted-foreground mb-8 max-w-3xl mx-auto font-roboto"
+              className="text-xl text-zinc-700 mb-8 max-w-3xl mx-auto font-roboto font-medium"
             >
               Create, edit, and share AI-powered mock API endpoints instantly to
               speed up development with ephemeral, customizable data.

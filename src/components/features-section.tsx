@@ -106,14 +106,14 @@ export default function FeaturesSection() {
           </p>
         </div>
 
-        <div ref={featuresRef} className="max-w-6xl mx-auto">
+        <div ref={featuresRef} className="max-w-6xl mx-auto ">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {features.map((feature, index) => (
               <div
                 key={index}
-                className="flex items-start space-x-3 p-4 rounded-lg bg-card border border-border"
+                className="flex items-start space-x-3 p-4 rounded-lg bg-card border border-border group cursor-pointer hover:scale-105 transition-all duration-300 hover:shadow-[0px_0px_9px] shadow-zinc-500/50"
               >
-                <div className="flex-shrink-0 mt-1">
+                <div className="flex-shrink-0 mt-1 group-hover:scale-125 group-hover:text-primary group-hover:-rotate-12 transition-all duration-300">
                   <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
                     <feature.icon className="w-5 h-5 text-primary" />
                   </div>

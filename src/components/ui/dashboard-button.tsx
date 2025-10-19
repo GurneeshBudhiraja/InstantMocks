@@ -38,7 +38,7 @@ export function DashboardButton({
           "cursor-pointer",
           className,
           variant === "default" &&
-            "bg-primary hover:bg-primary/90 text-primary-foreground"
+            "bg-primary hover:bg-primary/90 text-primary-foreground relative group overflow-hidden"
         )}
       >
         {icon && <span className="mr-2">{icon}</span>}

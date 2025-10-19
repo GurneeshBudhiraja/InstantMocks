@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { DashboardButton } from "@/components/ui/dashboard-button";
+import FloatingIcons from "@/components/ui/floating-icons";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -58,19 +59,21 @@ export default function CTASection() {
   return (
     <section
       ref={sectionRef}
-      className="py-20 bg-gradient-to-br from-primary/5 via-background to-secondary/5"
+      className="relative py-20 bg-gradient-to-br from-zinc-800 to-zinc-950 overflow-hidden"
     >
-      <div className="container mx-auto px-4">
+      <FloatingIcons />
+      <div className="container mx-auto px-4 relative z-10">
         <div className="text-center max-w-4xl mx-auto">
           <div ref={contentRef}>
-            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6 font-poppins leading-snug">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 font-poppins leading-snug bg-gradient-to-br from-zinc-100 to-zinc-300 text-transparent bg-clip-text">
               Ready to Accelerate Your Development?
             </h2>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               <DashboardButton
                 text="Start Building"
                 size="lg"
-                className="text-lg px-8 py-6 font-roboto-mono"
+                variant="outline"
+                className="text-lg px-8 py-6 font-roboto-mono "
               />
             </div>
           </div>

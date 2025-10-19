@@ -52,7 +52,7 @@ export default function Navigation() {
       ref={navRef}
       className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md"
     >
-      <div className="container mx-auto px-2 font-roboto-mono">
+      <div className="mx-auto font-roboto-mono px-5">
         <div className="flex items-center justify-end h-16 gap-4">
           <DashboardButton
             text="Get Started"
