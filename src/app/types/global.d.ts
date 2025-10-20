@@ -7,6 +7,7 @@ export interface MockAPI {
   description: string;
   createdAt: string;
   response: Record<string, unknown>;
+  isDynamic: boolean;
 }
 
 

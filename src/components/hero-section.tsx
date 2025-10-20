@@ -43,51 +43,51 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <AuroraBackground>
-      <section
-        ref={heroRef}
-        className="relative h-screen flex items-center justify-center overflow-hidden"
-      >
-        <div className="relative z-20 container mx-auto px-4 text-center">
-          <div className="max-w-4xl mx-auto">
-            <h1
-              ref={titleRef}
-              className="text-5xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-zinc-700 to-zinc-900 mb-6 leading-tight font-poppins "
-            >
-              <span>Instant</span>Mocks
-            </h1>
+    // <AuroraBackground>
+    <section
+      ref={heroRef}
+      className="relative h-screen flex items-center justify-center overflow-hidden"
+    >
+      <div className="relative z-20 container mx-auto px-4 text-center">
+        <div className="max-w-4xl mx-auto">
+          <h1
+            ref={titleRef}
+            className="text-5xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-zinc-700 to-zinc-900 mb-6 leading-tight font-poppins "
+          >
+            <span>Instant</span>Mocks
+          </h1>
 
-            <p
-              ref={subtitleRef}
-              className="text-xl text-zinc-700 mb-8 max-w-3xl mx-auto font-roboto font-medium"
-            >
-              Create, edit, and share AI-powered mock API endpoints instantly to
-              speed up development with ephemeral, customizable data.
-            </p>
+          <p
+            ref={subtitleRef}
+            className="text-xl text-zinc-700 mb-8 max-w-3xl mx-auto font-roboto font-medium"
+          >
+            Create, edit, and share AI-powered mock API endpoints instantly to
+            speed up development with ephemeral, customizable data.
+          </p>
 
-            {/* CTA Buttons */}
-            <div
-              ref={ctaRef}
-              className="flex flex-col sm:flex-row gap-4 justify-center mb-12"
-            >
-              <Link href="#features" className="">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="text-lg px-8 py-6 borde hover:bg-accent cursor-pointer font-roboto-mono"
-                >
-                  Features
-                </Button>
-              </Link>
-              <DashboardButton
-                text="Get Started"
+          {/* CTA Buttons */}
+          <div
+            ref={ctaRef}
+            className="flex flex-col sm:flex-row gap-4 justify-center mb-12"
+          >
+            <Link href="#features" className="">
+              <Button
+                variant="outline"
                 size="lg"
-                className="text-lg px-8 py-6 font-roboto-mono"
-              />
-            </div>
+                className="text-lg px-8 py-6 borde hover:bg-accent cursor-pointer font-roboto-mono border-[2px] border-[#0000003b] shadow-[inset_0px_0px_10px_#0000006e] "
+              >
+                Features
+              </Button>
+            </Link>
+            <DashboardButton
+              text="Get Started"
+              size="lg"
+              className="text-lg px-8 py-6 font-roboto-mono depth-shadow-inset"
+            />
           </div>
         </div>
-      </section>
-    </AuroraBackground>
+      </div>
+    </section>
+    // </AuroraBackground>
   );
 }

@@ -73,7 +73,7 @@ export default function CTASection() {
                 text="Start Building"
                 size="lg"
                 variant="outline"
-                className="text-lg px-8 py-6 font-roboto-mono "
+                className="text-lg px-8 py-6 font-roboto-mono depth-shadow-inset-dark "
               />
             </div>
           </div>

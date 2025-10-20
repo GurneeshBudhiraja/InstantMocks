@@ -8,6 +8,8 @@ import {
   CreateMockDialog,
   MockAPI,
 } from "@/components/dashboard-page";
+import { cn } from "@/lib/utils";
+import { motion } from "motion/react";
 
 export default function DashboardPage() {
   const [mockApis, setMockApis] = useState<MockAPI[]>([]);
@@ -90,30 +92,23 @@ export default function DashboardPage() {
     // You could add a toast notification here
   };
 
-  const handleSearch = (query: string) => {
-    if (!query.trim()) {
-      setFilteredApis(mockApis);
-    } else {
-      const filtered = mockApis.filter(
-        (mock) =>
-          mock.name.toLowerCase().includes(query.toLowerCase()) ||
-          mock.endpoint.toLowerCase().includes(query.toLowerCase()) ||
-          mock.description.toLowerCase().includes(query.toLowerCase())
-      );
-      setFilteredApis(filtered);
-    }
-  };
-
   const handleOpenCreateDialog = () => {
     setEditingMock(null);
     setIsCreateDialogOpen(true);
   };
 
   return (
-    <div className="min-h-screen w-full bg-white">
-      <div className="min-h-screen w-full bg-[#f9fafb] relative">
+    <div
+      className={cn("h-screen w-full bg-white relative", {
+        "overflow-hidden": mockApis.length === 0,
+      })}
+    >
+      <div className="min-h-screen w-full bg-[#f9fafb]">
+        {/* Grid lines background */}
         <div
-          className="absolute inset-0 z-0"
+          className={cn("absolute inset-0 z-0", {
+            hidden: mockApis.length > 0,
+          })}
           style={{
             backgroundImage: `
         linear-gradient(to right, #d1d5db 1px, transparent 1px),
@@ -128,11 +123,7 @@ export default function DashboardPage() {
         />
 
         <div className="container mx-auto px-4 py-8">
-          <DashboardHeader
-            onCreateMock={handleOpenCreateDialog}
-            onSearch={handleSearch}
-            mockCount={mockApis.length}
-          />
+          <DashboardHeader onCreateMock={handleOpenCreateDialog} />
 
           {mockApis.length === 0 ? (
             <EmptyState onCreateMock={handleOpenCreateDialog} />
@@ -159,6 +150,21 @@ export default function DashboardPage() {
         </div>
         {/* Your Content/Components */}
       </div>
+      {mockApis.length === 0 && (
+        <motion.div
+          initial={{ opacity: 0, rotate: 0 }}
+          animate={{ opacity: 1, rotate: 360 }}
+          transition={{
+            opacity: { duration: 0.5 },
+            rotate: {
+              repeat: Infinity,
+              ease: "linear",
+              duration: 8,
+            },
+          }}
+          className="absolute h-40 aspect-square z-50 -bottom-5 right-1.5 rounded-full bg-gradient-to-r from-blue-400 to-violet-600 blur-3xl overflow-clip"
+        />
+      )}
     </div>
   );
 }

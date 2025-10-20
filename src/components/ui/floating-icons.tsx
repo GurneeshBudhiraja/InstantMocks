@@ -70,12 +70,11 @@ const FloatingIcon = ({
   return (
     <div
       ref={iconRef}
-      className={`absolute pointer-events-none select-none ${className}`}
+      className={`absolute pointer-events-none select-none text-zinc-500 ${className}`}
       style={{
         left: `${x}%`,
         top: `${y}%`,
         fontSize: `${size}px`,
-        color: "rgba(255, 255, 255, 0.1)",
       }}
     >
       {icon}
@@ -87,7 +86,6 @@ export default function FloatingIcons() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const icons = [
-    // Code-related icons with varying parallax speeds
     { icon: "{}", size: 24, x: 10, y: 20, delay: 0, parallaxSpeed: 80 },
     { icon: "</>", size: 20, x: 85, y: 15, delay: 0.5, parallaxSpeed: 120 },
     { icon: "API", size: 16, x: 15, y: 80, delay: 1, parallaxSpeed: 60 },
@@ -113,7 +111,7 @@ export default function FloatingIcons() {
   return (
     <div
       ref={containerRef}
-      className="absolute inset-0 overflow-hidden pointer-events-none"
+      className="absolute inset-0 overflow-hidden pointer-events-none "
     >
       {icons.map((iconData, index) => (
         <FloatingIcon

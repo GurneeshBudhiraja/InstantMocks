@@ -15,7 +15,7 @@ body {
 
 :root {
   /* shadcn variables - Clean minimalistic theme */
-  --background: #FAFAFA;
+  --background: #fafafa;
   --foreground: #1a1a1a;
   --card: #ffffff;
   --card-foreground: #1a1a1a;
@@ -211,4 +211,13 @@ body {
 
 body {
   letter-spacing: var(--tracking-normal);
+}
+
+@layer utilities {
+  .depth-shadow-inset {
+    box-shadow: inset 0px 0px 6px 1px #ffffffbd;
+  }
+  .depth-shadow-inset-dark {
+    box-shadow: inset 0px 0px 6px 1px #000000c7;
+  }
 }
