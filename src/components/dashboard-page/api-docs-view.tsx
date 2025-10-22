@@ -207,16 +207,42 @@ function ApiEndpoint({ mockApi, onTest, onEdit, onDelete }: ApiEndpointProps) {
                       </label>
                       <div className="flex items-center gap-2">
                         <code className="flex-1 text-sm bg-white p-2 rounded border font-mono">
-                          https://api.example.com{mockApi.endpoint}
+                          {(() => {
+                            let url = `https://api.example.com${mockApi.endpoint}`;
+                            if (
+                              mockApi.queryParams &&
+                              mockApi.queryParams.length > 0
+                            ) {
+                              const queryString = mockApi.queryParams
+                                .filter((param) => param.key && param.value)
+                                .map((param) => `${param.key}=${param.value}`)
+                                .join("&");
+                              if (queryString) {
+                                url += `?${queryString}`;
+                              }
+                            }
+                            return url;
+                          })()}
                         </code>
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() =>
-                            copyToClipboard(
-                              `https://api.example.com${mockApi.endpoint}`
-                            )
-                          }
+                          onClick={() => {
+                            let url = `https://api.example.com${mockApi.endpoint}`;
+                            if (
+                              mockApi.queryParams &&
+                              mockApi.queryParams.length > 0
+                            ) {
+                              const queryString = mockApi.queryParams
+                                .filter((param) => param.key && param.value)
+                                .map((param) => `${param.key}=${param.value}`)
+                                .join("&");
+                              if (queryString) {
+                                url += `?${queryString}`;
+                              }
+                            }
+                            copyToClipboard(url);
+                          }}
                         >
                           <CopyIcon className="w-3 h-3" />
                         </Button>
@@ -236,6 +262,37 @@ function ApiEndpoint({ mockApi, onTest, onEdit, onDelete }: ApiEndpointProps) {
                       </Badge>
                     </div>
 
+                    {/* Query Parameters */}
+                    {mockApi.queryParams && mockApi.queryParams.length > 0 && (
+                      <div>
+                        <label className="text-sm font-medium text-gray-700 block mb-1">
+                          Query Parameters
+                        </label>
+                        <div className="space-y-2">
+                          {mockApi.queryParams.map((param, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center gap-2"
+                            >
+                              <code className="text-xs bg-gray-100 px-2 py-1 rounded font-mono">
+                                {param.key}
+                              </code>
+                              <span className="text-xs text-gray-500">=</span>
+                              <code className="text-xs bg-gray-100 px-2 py-1 rounded font-mono">
+                                {param.value}
+                              </code>
+                              {param.description && (
+                                <span className="text-xs text-gray-500">
+                                  - {param.description}
+                                </span>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Request Body */}
                     {(mockApi.method === "POST" ||
                       mockApi.method === "PUT" ||
                       mockApi.method === "PATCH") && (
@@ -243,13 +300,43 @@ function ApiEndpoint({ mockApi, onTest, onEdit, onDelete }: ApiEndpointProps) {
                         <label className="text-sm font-medium text-gray-700 block mb-1">
                           Request Body (JSON)
                         </label>
-                        <Textarea
-                          value={testData}
-                          onChange={(e) => setTestData(e.target.value)}
-                          placeholder="Enter request body (optional)"
-                          className="font-mono text-sm"
-                          rows={4}
-                        />
+                        {mockApi.requestBody &&
+                        Object.keys(mockApi.requestBody).length > 0 ? (
+                          <div className="space-y-2">
+                            <div className="relative">
+                              <pre className="bg-white p-3 rounded border text-xs font-mono overflow-x-auto max-h-32">
+                                {JSON.stringify(mockApi.requestBody, null, 2)}
+                              </pre>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="absolute top-2 right-2"
+                                onClick={() =>
+                                  copyToClipboard(
+                                    JSON.stringify(mockApi.requestBody, null, 2)
+                                  )
+                                }
+                              >
+                                <CopyIcon className="w-3 h-3" />
+                              </Button>
+                            </div>
+                            <Textarea
+                              value={testData}
+                              onChange={(e) => setTestData(e.target.value)}
+                              placeholder="Override request body (optional)"
+                              className="font-mono text-sm"
+                              rows={4}
+                            />
+                          </div>
+                        ) : (
+                          <Textarea
+                            value={testData}
+                            onChange={(e) => setTestData(e.target.value)}
+                            placeholder="Enter request body (optional)"
+                            className="font-mono text-sm"
+                            rows={4}
+                          />
+                        )}
                       </div>
                     )}
                   </div>

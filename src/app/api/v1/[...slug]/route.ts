@@ -1,3 +1,4 @@
+import { generateDynamicResponse } from "@/app/ai";
 import { getAPIData } from "@/app/appwrite";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -51,15 +52,37 @@ async function handleAllMethods(request: NextRequest, method: SupportedMethods) 
 
     const { data, type } = parsedResponse
 
-    if (type === "fixed") {
-      return NextResponse.json({ ...data }, { status: 200 });
-    } else {
-      return NextResponse.json({ success: true, data: "dynamic response" }, { status: 200 });
-    }
+    // Generate the dynamic response based on the `data`
+    if (type === "dynamic") {
+      const aiDynamicResponse = await generateDynamicResponse(data)
 
+      // Return error when aiDynamicResponse is null
+      if (aiDynamicResponse === null) {
+        return NextResponse.json("Something went wrong", { status: 500 });
+      }
+
+      // Extract the JSON data from the aiDynamicResponse
+      const match = typeof aiDynamicResponse === "string"
+        ? aiDynamicResponse.match(/```json\s*({[\s\S]*})\s*```/)
+        : null;
+
+      console.log("🔗 Match")
+      console.log(match)
+
+
+      if (!match) {
+        console.log("❌ Error in `extract the JSON data from the aiDynamicResponse`", aiDynamicResponse);
+        return NextResponse.json("Something went wrong", { status: 500 });
+      }
+
+      const dynamic = JSON.parse(match[1]);
+      return NextResponse.json(dynamic, { status: 200 });
+
+    }
+    return NextResponse.json({ ...data }, { status: 200 });
   } catch (error) {
     console.log(`Error in ${method} request`, (error as Error).message);
-    return NextResponse.json({ success: false, error: (error as Error).message }, { status: 500 });
+    return NextResponse.json("Something went wrong", { status: 500 });
   }
 
 }

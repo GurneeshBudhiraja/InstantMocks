@@ -141,6 +141,40 @@ export function MockApiCard({
             </p>
           </div>
 
+          {/* Query Parameters */}
+          {mockApi.queryParams && mockApi.queryParams.length > 0 && (
+            <div>
+              <p className="text-sm font-medium text-foreground mb-1">
+                Query Parameters
+              </p>
+              <div className="flex flex-wrap gap-1">
+                {mockApi.queryParams.slice(0, 3).map((param, index) => (
+                  <Badge key={index} variant="outline" className="text-xs">
+                    {param.key}={param.value}
+                  </Badge>
+                ))}
+                {mockApi.queryParams.length > 3 && (
+                  <Badge variant="outline" className="text-xs">
+                    +{mockApi.queryParams.length - 3} more
+                  </Badge>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Request Body */}
+          {mockApi.requestBody &&
+            Object.keys(mockApi.requestBody).length > 0 && (
+              <div>
+                <p className="text-sm font-medium text-foreground mb-1">
+                  Request Body
+                </p>
+                <div className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded font-mono">
+                  {Object.keys(mockApi.requestBody).length} field(s)
+                </div>
+              </div>
+            )}
+
           <div className="flex items-center justify-between pt-2 border-t border-border">
             <span className="text-xs text-muted-foreground">
               Created {new Date(mockApi.createdAt).toLocaleDateString()}
