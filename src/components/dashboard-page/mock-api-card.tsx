@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import {
   MoreHorizontalIcon,
   CopyIcon,
-  EditIcon,
   TrashIcon,
   ExternalLinkIcon,
 } from "lucide-react";
@@ -15,17 +14,11 @@ import { MockAPI } from "./types";
 
 interface MockApiCardProps {
   mockApi: MockAPI;
-  onEdit: (id: string) => void;
   onDelete: (id: string) => void;
   onCopy: (endpoint: string) => void;
 }
 
-export function MockApiCard({
-  mockApi,
-  onEdit,
-  onDelete,
-  onCopy,
-}: MockApiCardProps) {
+export function MockApiCard({ mockApi, onDelete, onCopy }: MockApiCardProps) {
   const [showActions, setShowActions] = useState(false);
 
   const getMethodColor = (method: string) => {
@@ -81,15 +74,6 @@ export function MockApiCard({
             </Button>
             {showActions && (
               <div className="absolute right-0 top-8 bg-background border border-border rounded-md shadow-lg z-10 min-w-[120px]">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="w-full justify-start"
-                  onClick={() => onEdit(mockApi.id)}
-                >
-                  <EditIcon className="w-4 h-4 mr-2" />
-                  Edit
-                </Button>
                 <Button
                   variant="ghost"
                   size="sm"

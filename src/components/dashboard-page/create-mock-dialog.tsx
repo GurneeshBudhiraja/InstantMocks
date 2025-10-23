@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/select";
 import { WandIcon } from "lucide-react";
 import { MockAPI } from "@/app/types/global";
+import { generateSchemaForAPI } from "@/app/ai";
 
 interface CreateMockDialogProps {
   isOpen: boolean;
@@ -323,18 +324,44 @@ export function CreateMockDialog({
     console.log("Generate with AI clicked - Starting AI generation process");
     setIsGenerating(true);
 
-    // Simulate AI generation for 2 seconds
-    setTimeout(() => {
-      const randomSchema = generateRandomSchema();
-      console.log("AI generation completed - Generated schema:", randomSchema);
+    try {
+      // Use the text in the response field as instructions, or default instruction
+      const instructions =
+        responseText.trim() || "Generate a random API response schema";
+      const generatedSchema = await generateSchemaForAPI(instructions);
 
+      if (generatedSchema) {
+        console.log(
+          "AI generation completed - Generated schema:",
+          generatedSchema
+        );
+
+        setFormData((prev) => ({
+          ...prev,
+          response: generatedSchema,
+        }));
+        setResponseText(JSON.stringify(generatedSchema, null, 2));
+      } else {
+        console.error("AI generation failed - falling back to random schema");
+        const randomSchema = generateRandomSchema();
+        setFormData((prev) => ({
+          ...prev,
+          response: randomSchema,
+        }));
+        setResponseText(JSON.stringify(randomSchema, null, 2));
+      }
+    } catch (error) {
+      console.error("Error generating schema with AI:", error);
+      // Fallback to random schema
+      const randomSchema = generateRandomSchema();
       setFormData((prev) => ({
         ...prev,
         response: randomSchema,
       }));
       setResponseText(JSON.stringify(randomSchema, null, 2));
+    } finally {
       setIsGenerating(false);
-    }, 2000); // 2 seconds
+    }
   };
 
   return (
@@ -443,6 +470,8 @@ export function CreateMockDialog({
               <label className="text-sm font-medium text-foreground">
                 API Response
               </label>
+
+              {/* Side by side buttons */}
               <div className="flex items-center gap-2">
                 <Button
                   type="button"
@@ -453,7 +482,7 @@ export function CreateMockDialog({
                   className="flex-1"
                 >
                   <WandIcon className="w-4 h-4 mr-2" />
-                  {isGenerating ? "Generating..." : "Generate with AI"}
+                  {isGenerating ? "Generating..." : "Generate Schema with AI"}
                 </Button>
                 <Button
                   type="button"

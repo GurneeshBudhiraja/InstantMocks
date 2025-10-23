@@ -92,3 +92,24 @@ export async function getAllThePathBasedOnUserId(userId: string) {
   }
 
 }
+
+
+export async function deleteMockAPI(apiId: string) {
+  try {
+    const client = initAppwrite()
+    if (!client) {
+      throw new Error("Failed to initialize Appwrite client");
+    }
+    const databases = new Databases(client);
+    console.log("🗑️ Deleting the API with the id", apiId);
+    const response = await databases.deleteDocument({
+      databaseId: process.env.NEXT_APPWRITE_DB_ID,
+      collectionId: process.env.NEXT_APPWRITE_API_COLLECTION_NAME,
+      documentId: apiId,
+    });
+    return response;
+  } catch (error) {
+    console.log("❌ Error in `deleteMockAPI`", (error as Error).message);
+    return null
+  }
+}

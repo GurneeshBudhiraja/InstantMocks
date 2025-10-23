@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { CreateMockDialog, MockAPI } from "@/components/dashboard-page";
 import { ApiDocsView } from "@/components/dashboard-page/api-docs-view";
 import { ErrorModal } from "@/components/ui/error-modal";
-import { getAllThePathBasedOnUserId } from "@/app/appwrite";
+import { DeleteConfirmationModal } from "@/components/ui/delete-confirmation-modal";
+import { getAllThePathBasedOnUserId, deleteMockAPI } from "@/app/appwrite";
 import { ID } from "node-appwrite";
 
 // Utility function to get the base URL
@@ -32,6 +33,16 @@ export default function DashboardPage() {
     title: "",
     message: "",
   });
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{
+    isOpen: boolean;
+    apiId: string;
+    apiName: string;
+  }>({
+    isOpen: false,
+    apiId: "",
+    apiName: "",
+  });
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Initialize userId and fetch APIs
   useEffect(() => {
@@ -167,16 +178,58 @@ export default function DashboardPage() {
     }
   };
 
-  const handleEditMock = (id: string) => {
-    const mock = mockApis.find((m) => m.id === id);
-    if (mock) {
-      setEditingMock(mock);
-      setIsCreateDialogOpen(true);
+  const handleDeleteMock = (id: string) => {
+    const api = mockApis.find((mock) => mock.id === id);
+    if (api) {
+      setDeleteConfirmation({
+        isOpen: true,
+        apiId: id,
+        apiName: api.name,
+      });
     }
   };
 
-  const handleDeleteMock = (id: string) => {
-    setMockApis((prev) => prev.filter((mock) => mock.id !== id));
+  const confirmDelete = async () => {
+    try {
+      setIsDeleting(true);
+
+      // Call the server function to delete the API
+      const result = await deleteMockAPI(deleteConfirmation.apiId);
+
+      if (result) {
+        // Remove from local state
+        setMockApis((prev) =>
+          prev.filter((mock) => mock.id !== deleteConfirmation.apiId)
+        );
+
+        // Close confirmation modal
+        setDeleteConfirmation({
+          isOpen: false,
+          apiId: "",
+          apiName: "",
+        });
+      } else {
+        throw new Error("Failed to delete API");
+      }
+    } catch (error) {
+      console.error("Error deleting API:", error);
+      setError({
+        isOpen: true,
+        title: "Delete Failed",
+        message: "Failed to delete the API. Please try again.",
+        details: error instanceof Error ? error.message : "Unknown error",
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const cancelDelete = () => {
+    setDeleteConfirmation({
+      isOpen: false,
+      apiId: "",
+      apiName: "",
+    });
   };
 
   const handleOpenCreateDialog = () => {
@@ -209,7 +262,6 @@ export default function DashboardPage() {
         mockApis={mockApis}
         onBack={() => {}}
         onCreateMock={handleOpenCreateDialog}
-        onEditMock={handleEditMock}
         onDeleteMock={handleDeleteMock}
       />
 
@@ -226,6 +278,14 @@ export default function DashboardPage() {
         title={error.title}
         message={error.message}
         details={error.details}
+      />
+
+      <DeleteConfirmationModal
+        isOpen={deleteConfirmation.isOpen}
+        onClose={cancelDelete}
+        onConfirm={confirmDelete}
+        apiName={deleteConfirmation.apiName}
+        isDeleting={isDeleting}
       />
     </div>
   );

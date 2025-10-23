@@ -26,18 +26,16 @@ interface ApiDocsViewProps {
   mockApis: MockAPI[];
   onBack: () => void;
   onCreateMock?: () => void;
-  onEditMock?: (id: string) => void;
   onDeleteMock?: (id: string) => void;
 }
 
 interface ApiEndpointProps {
   mockApi: MockAPI;
   onTest: (mockApi: MockAPI, testData?: any) => void;
-  onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
 }
 
-function ApiEndpoint({ mockApi, onTest, onEdit, onDelete }: ApiEndpointProps) {
+function ApiEndpoint({ mockApi, onTest, onDelete }: ApiEndpointProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [testData, setTestData] = useState("");
   const [testResult, setTestResult] = useState<any>(null);
@@ -146,19 +144,6 @@ function ApiEndpoint({ mockApi, onTest, onEdit, onDelete }: ApiEndpointProps) {
               <PlayIcon className="w-3 h-3 mr-1" />
               {isTesting ? "Testing..." : "Try it out"}
             </Button>
-            {onEdit && (
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onEdit(mockApi.id);
-                }}
-                className="text-xs"
-              >
-                <EditIcon className="w-3 h-3" />
-              </Button>
-            )}
             {onDelete && (
               <Button
                 size="sm"
@@ -206,7 +191,7 @@ function ApiEndpoint({ mockApi, onTest, onEdit, onDelete }: ApiEndpointProps) {
                         URL
                       </label>
                       <div className="flex items-center gap-2">
-                        <code className="flex-1 text-sm bg-white p-2 rounded border font-mono">
+                        <code className="flex-1 text-sm bg-white p-2 rounded border font-mono break-all whitespace-pre-wrap">
                           {(() => {
                             let url =
                               mockApi.fullApiUrl ||
@@ -445,7 +430,6 @@ export function ApiDocsView({
   mockApis,
   onBack,
   onCreateMock,
-  onEditMock,
   onDeleteMock,
 }: ApiDocsViewProps) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -595,7 +579,6 @@ export function ApiDocsView({
                     key={mockApi.id}
                     mockApi={mockApi}
                     onTest={handleTest}
-                    onEdit={onEditMock}
                     onDelete={onDeleteMock}
                   />
                 ))}
