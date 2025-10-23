@@ -9,9 +9,14 @@ type SupportedMethods = 'GET' | 'POST' | 'DELETE' | 'PUT' | 'PATCH';
 
 async function handleAllMethods(request: NextRequest, method: SupportedMethods) {
   try {
-    const pathName = request.nextUrl.pathname.split("/").filter((value) => !["", "api", "v1"].includes(value))
-    const apiId = pathName[0]
-    const apiRoute = pathName.slice(1).join("/")
+    // Remove only the very first "api" and "v1" that appear
+    const pathSegments = request.nextUrl.pathname.split("/").filter(Boolean);
+    const apiIndex = pathSegments.indexOf("api");
+    if (apiIndex !== -1) pathSegments.splice(apiIndex, 1);
+    const v1Index = pathSegments.indexOf("v1");
+    if (v1Index !== -1) pathSegments.splice(v1Index, 1);
+    const apiId = pathSegments[0];
+    const apiRoute = pathSegments.slice(1).join("/");
     /**
      * verify if the API id is valid
      * check if the method exists in the data

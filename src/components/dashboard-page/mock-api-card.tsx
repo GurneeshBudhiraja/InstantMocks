@@ -94,7 +94,7 @@ export function MockApiCard({
                   variant="ghost"
                   size="sm"
                   className="w-full justify-start"
-                  onClick={() => onCopy(mockApi.endpoint)}
+                  onClick={() => onCopy(mockApi.fullApiUrl || mockApi.endpoint)}
                 >
                   <CopyIcon className="w-4 h-4 mr-2" />
                   Copy URL
@@ -116,15 +116,17 @@ export function MockApiCard({
       <CardContent>
         <div className="space-y-3">
           <div>
-            <p className="text-sm font-medium text-foreground mb-1">Endpoint</p>
+            <p className="text-sm font-medium text-foreground mb-1">
+              API Endpoint
+            </p>
             <div className="flex items-center gap-2">
-              <code className="text-sm bg-muted px-2 py-1 rounded font-mono flex-1">
-                {mockApi.endpoint}
+              <code className="text-sm bg-muted px-2 py-1 rounded font-mono flex-1 break-all">
+                {mockApi.fullApiUrl || mockApi.endpoint}
               </code>
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => onCopy(mockApi.endpoint)}
+                onClick={() => onCopy(mockApi.fullApiUrl || mockApi.endpoint)}
                 className="shrink-0"
               >
                 <CopyIcon className="w-4 h-4" />

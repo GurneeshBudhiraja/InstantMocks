@@ -208,7 +208,9 @@ function ApiEndpoint({ mockApi, onTest, onEdit, onDelete }: ApiEndpointProps) {
                       <div className="flex items-center gap-2">
                         <code className="flex-1 text-sm bg-white p-2 rounded border font-mono">
                           {(() => {
-                            let url = `https://api.example.com${mockApi.endpoint}`;
+                            let url =
+                              mockApi.fullApiUrl ||
+                              `https://api.example.com${mockApi.endpoint}`;
                             if (
                               mockApi.queryParams &&
                               mockApi.queryParams.length > 0
@@ -228,7 +230,9 @@ function ApiEndpoint({ mockApi, onTest, onEdit, onDelete }: ApiEndpointProps) {
                           size="sm"
                           variant="outline"
                           onClick={() => {
-                            let url = `https://api.example.com${mockApi.endpoint}`;
+                            let url =
+                              mockApi.fullApiUrl ||
+                              `https://api.example.com${mockApi.endpoint}`;
                             if (
                               mockApi.queryParams &&
                               mockApi.queryParams.length > 0

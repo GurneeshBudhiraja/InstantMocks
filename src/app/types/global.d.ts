@@ -10,6 +10,7 @@ export interface MockAPI {
   isDynamic: boolean;
   queryParams?: Array<{ key: string; value: string; description?: string }>;
   requestBody?: Record<string, unknown>;
+  fullApiUrl?: string;
 }
 
 

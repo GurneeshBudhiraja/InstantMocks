@@ -79,6 +79,7 @@ export async function getAllThePathBasedOnUserId(userId: string) {
       throw new Error("Failed to initialize Appwrite client");
     }
     const databases = new Databases(client);
+    console.log("🏃‍➡️ Fetching all the APIs based on the userId");
     const response = await databases.listDocuments({
       databaseId: process.env.NEXT_APPWRITE_DB_ID,
       collectionId: process.env.NEXT_APPWRITE_API_COLLECTION_NAME,

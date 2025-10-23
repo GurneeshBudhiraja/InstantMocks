@@ -42,8 +42,6 @@ export function CreateMockDialog({
     response: editingMock?.response || {},
     isDynamic: editingMock?.isDynamic || false,
     typeReplacedObject: null as any,
-    queryParams: editingMock?.queryParams || [],
-    requestBody: editingMock?.requestBody || {},
   });
 
   const [isGenerating, setIsGenerating] = useState(false);
@@ -57,14 +55,6 @@ export function CreateMockDialog({
   const [isTypeValid, setIsTypeValid] = useState(true);
   const [typeError, setTypeError] = useState<string>("");
   const [showPillView, setShowPillView] = useState(false);
-  const [requestBodyText, setRequestBodyText] = useState(
-    editingMock?.requestBody
-      ? JSON.stringify(editingMock.requestBody, null, 2)
-      : ""
-  );
-  const [isRequestBodyValid, setIsRequestBodyValid] = useState(
-    editingMock?.requestBody ? true : true
-  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,13 +68,9 @@ export function CreateMockDialog({
       response: {},
       isDynamic: false,
       typeReplacedObject: null,
-      queryParams: [],
-      requestBody: {},
     });
     setResponseText("");
-    setRequestBodyText("");
     setIsValidJson(true);
-    setIsRequestBodyValid(true);
     setIsTypeValid(true);
     setTypeError("");
     setOriginalJson("");
@@ -451,141 +437,6 @@ export function CreateMockDialog({
               className="border-2 border-zinc-400 rounded-md focus:!border-zinc-400 focus:!ring-0"
             />
           </div>
-
-          {/* Query Parameters */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">
-              Query Parameters (Optional)
-            </label>
-            <div className="space-y-2">
-              {formData.queryParams.map((param, index) => (
-                <div key={index} className="flex gap-2">
-                  <Input
-                    value={param.key}
-                    onChange={(e) => {
-                      const newParams = [...formData.queryParams];
-                      newParams[index] = { ...param, key: e.target.value };
-                      setFormData((prev) => ({
-                        ...prev,
-                        queryParams: newParams,
-                      }));
-                    }}
-                    placeholder="Parameter name"
-                    className="border-2 border-zinc-400 rounded-md focus:!border-zinc-400 focus:!ring-0"
-                  />
-                  <Input
-                    value={param.value}
-                    onChange={(e) => {
-                      const newParams = [...formData.queryParams];
-                      newParams[index] = { ...param, value: e.target.value };
-                      setFormData((prev) => ({
-                        ...prev,
-                        queryParams: newParams,
-                      }));
-                    }}
-                    placeholder="Default value"
-                    className="border-2 border-zinc-400 rounded-md focus:!border-zinc-400 focus:!ring-0"
-                  />
-                  <Input
-                    value={param.description || ""}
-                    onChange={(e) => {
-                      const newParams = [...formData.queryParams];
-                      newParams[index] = {
-                        ...param,
-                        description: e.target.value,
-                      };
-                      setFormData((prev) => ({
-                        ...prev,
-                        queryParams: newParams,
-                      }));
-                    }}
-                    placeholder="Description (optional)"
-                    className="border-2 border-zinc-400 rounded-md focus:!border-zinc-400 focus:!ring-0"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      const newParams = formData.queryParams.filter(
-                        (_, i) => i !== index
-                      );
-                      setFormData((prev) => ({
-                        ...prev,
-                        queryParams: newParams,
-                      }));
-                    }}
-                    className="text-red-600 hover:text-red-700"
-                  >
-                    Remove
-                  </Button>
-                </div>
-              ))}
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    queryParams: [
-                      ...prev.queryParams,
-                      { key: "", value: "", description: "" },
-                    ],
-                  }));
-                }}
-                className="w-full"
-              >
-                + Add Query Parameter
-              </Button>
-            </div>
-          </div>
-
-          {/* Request Body */}
-          {(formData.method === "POST" ||
-            formData.method === "PUT" ||
-            formData.method === "PATCH") && (
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">
-                Request Body (Optional)
-              </label>
-              <Textarea
-                value={requestBodyText}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setRequestBodyText(value);
-
-                  if (value.trim() === "") {
-                    setIsRequestBodyValid(true);
-                    setFormData((prev) => ({ ...prev, requestBody: {} }));
-                  } else {
-                    try {
-                      const parsed = JSON.parse(value);
-                      setFormData((prev) => ({ ...prev, requestBody: parsed }));
-                      setIsRequestBodyValid(true);
-                    } catch {
-                      setIsRequestBodyValid(false);
-                      setFormData((prev) => ({ ...prev, requestBody: {} }));
-                    }
-                  }
-                }}
-                placeholder="Enter JSON request body..."
-                rows={4}
-                className="font-mono text-sm border-2 border-zinc-400 rounded-md focus:!border-zinc-400 focus:!ring-0"
-              />
-              {requestBodyText.trim() !== "" && (
-                <div className="flex justify-end mt-1">
-                  <span
-                    className={`text-xs font-medium ${
-                      isRequestBodyValid ? "text-green-600" : "text-red-600"
-                    }`}
-                  >
-                    {isRequestBodyValid ? "✓ Valid JSON" : "✗ Invalid JSON"}
-                  </span>
-                </div>
-              )}
-            </div>
-          )}
 
           <div className="space-y-3">
             <div className="space-y-2">

@@ -53,8 +53,8 @@ export async function POST(req: Request) {
 
     // Get the validated data
     const validatedData = validation.data;
-    // remove the leading slash from the path
-    const transformedPath = validatedData.path.replace(/^\/+/, "");
+    // remove the leading and trailing slashes from the path
+    const transformedPath = validatedData.path.replace(/^\/+|\/+$/g, "");
 
     // Check if the path is already exists
     const allUserCreatedAPIs = await getAllThePathBasedOnUserId(validatedData.userId)
