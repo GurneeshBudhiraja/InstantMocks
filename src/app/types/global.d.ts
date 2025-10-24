@@ -11,6 +11,7 @@ export interface MockAPI {
   queryParams?: Array<{ key: string; value: string; description?: string }>;
   requestBody?: Record<string, unknown>;
   fullApiUrl?: string;
+  expiresAt?: string;
 }
 
 

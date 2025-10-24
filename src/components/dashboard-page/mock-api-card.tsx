@@ -8,6 +8,7 @@ import {
   CopyIcon,
   TrashIcon,
   ExternalLinkIcon,
+  ClockIcon,
 } from "lucide-react";
 import { useState } from "react";
 import { MockAPI } from "./types";
@@ -20,6 +21,28 @@ interface MockApiCardProps {
 
 export function MockApiCard({ mockApi, onDelete, onCopy }: MockApiCardProps) {
   const [showActions, setShowActions] = useState(false);
+
+  const formatExpiryTime = (expiresAt: string) => {
+    const now = new Date();
+    const expiry = new Date(expiresAt);
+    const diffMs = expiry.getTime() - now.getTime();
+
+    if (diffMs <= 0) {
+      return { text: "Expired", isExpired: true };
+    }
+
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMinutes / 60);
+
+    if (diffHours > 0) {
+      return {
+        text: `Expires in ${diffHours}h ${diffMinutes % 60}m`,
+        isExpired: false,
+      };
+    } else {
+      return { text: `Expires in ${diffMinutes}m`, isExpired: false };
+    }
+  };
 
   const getMethodColor = (method: string) => {
     switch (method.toUpperCase()) {
@@ -126,6 +149,25 @@ export function MockApiCard({ mockApi, onDelete, onCopy }: MockApiCardProps) {
               {mockApi.description}
             </p>
           </div>
+
+          {/* Expiry Time */}
+          {mockApi.expiresAt && (
+            <div>
+              <p className="text-sm font-medium text-foreground mb-1">Expiry</p>
+              <div className="flex items-center gap-2">
+                <ClockIcon className="w-4 h-4 text-muted-foreground" />
+                <span
+                  className={`text-sm ${
+                    formatExpiryTime(mockApi.expiresAt).isExpired
+                      ? "text-red-600 font-medium"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  {formatExpiryTime(mockApi.expiresAt).text}
+                </span>
+              </div>
+            </div>
+          )}
 
           {/* Query Parameters */}
           {mockApi.queryParams && mockApi.queryParams.length > 0 && (

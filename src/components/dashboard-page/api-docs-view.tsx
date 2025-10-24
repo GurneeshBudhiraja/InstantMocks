@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
   ChevronDownIcon,
@@ -14,10 +13,11 @@ import {
   CodeIcon,
   InfoIcon,
   CheckCircleIcon,
+  ClockIcon,
   XCircleIcon,
   PlusIcon,
-  EditIcon,
   TrashIcon,
+  CheckIcon,
 } from "lucide-react";
 import { MockAPI } from "@/app/types/global";
 import { useToast } from "@/components/ui/toast";
@@ -27,6 +27,7 @@ interface ApiDocsViewProps {
   onBack: () => void;
   onCreateMock?: () => void;
   onDeleteMock?: (id: string) => void;
+  isLoadingAPIs?: boolean;
 }
 
 interface ApiEndpointProps {
@@ -40,6 +41,30 @@ function ApiEndpoint({ mockApi, onTest, onDelete }: ApiEndpointProps) {
   const [testData, setTestData] = useState("");
   const [testResult, setTestResult] = useState<any>(null);
   const [isTesting, setIsTesting] = useState(false);
+  const [copiedStates, setCopiedStates] = useState<Record<string, boolean>>({});
+
+  // Utility function to calculate remaining time until expiry
+  const getTimeUntilExpiry = (expiresAt: string) => {
+    const now = new Date();
+    const expiry = new Date(expiresAt);
+    const diffMs = expiry.getTime() - now.getTime();
+
+    if (diffMs <= 0) {
+      return { text: "Expired", isExpired: true };
+    }
+
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMinutes / 60);
+
+    if (diffHours > 0) {
+      return {
+        text: `Expires in ${diffHours}h ${diffMinutes % 60}m`,
+        isExpired: false,
+      };
+    } else {
+      return { text: `Expires in ${diffMinutes}m`, isExpired: false };
+    }
+  };
   const { showToast } = useToast();
 
   const getMethodColor = (method: string) => {
@@ -71,23 +96,31 @@ function ApiEndpoint({ mockApi, onTest, onDelete }: ApiEndpointProps) {
   const handleTest = async () => {
     setIsTesting(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Make actual API call
+      const response = await fetch(
+        mockApi.fullApiUrl || `https://api.example.com${mockApi.endpoint}`,
+        {
+          method: mockApi.method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: mockApi.method !== "GET" && testData ? testData : undefined,
+        }
+      );
+
+      const data = await response.json();
 
       const result = {
-        status: mockApi.status,
-        data: mockApi.response,
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
+        status: response.status,
+        data: data,
+        headers: Object.fromEntries(response.headers.entries()),
         timestamp: new Date().toISOString(),
       };
 
       setTestResult(result);
       onTest(mockApi, testData ? JSON.parse(testData) : undefined);
       showToast(
-        `API test completed successfully! Status: ${mockApi.status}`,
+        `API test completed successfully! Status: ${response.status}`,
         "success"
       );
     } catch (error) {
@@ -101,9 +134,17 @@ function ApiEndpoint({ mockApi, onTest, onDelete }: ApiEndpointProps) {
     }
   };
 
-  const copyToClipboard = (text: string) => {
+  const copyToClipboard = (text: string, key: string) => {
     navigator.clipboard.writeText(text);
     showToast("Copied to clipboard!", "success");
+
+    // Set copied state to true
+    setCopiedStates((prev) => ({ ...prev, [key]: true }));
+
+    // Reset after 2 seconds
+    setTimeout(() => {
+      setCopiedStates((prev) => ({ ...prev, [key]: false }));
+    }, 2000);
   };
 
   return (
@@ -136,6 +177,7 @@ function ApiEndpoint({ mockApi, onTest, onDelete }: ApiEndpointProps) {
               variant="outline"
               onClick={(e) => {
                 e.stopPropagation();
+                setIsExpanded(true);
                 handleTest();
               }}
               disabled={isTesting}
@@ -158,9 +200,9 @@ function ApiEndpoint({ mockApi, onTest, onDelete }: ApiEndpointProps) {
               </Button>
             )}
             {isExpanded ? (
-              <ChevronDownIcon className="w-4 h-4 text-gray-500" />
+              <ChevronDownIcon className="w-4 h-4 text-gray-500 group-hover:text-gray-700 transition-colors group-hover:scale-110" />
             ) : (
-              <ChevronRightIcon className="w-4 h-4 text-gray-500" />
+              <ChevronRightIcon className="w-4 h-4 text-gray-500 group-hover:text-gray-700 transition-colors group-hover:scale-110" />
             )}
           </div>
         </div>
@@ -169,6 +211,22 @@ function ApiEndpoint({ mockApi, onTest, onDelete }: ApiEndpointProps) {
             {mockApi.name}
           </h3>
           <p className="text-sm text-gray-600 mt-1">{mockApi.description}</p>
+
+          {/* Expiry Time Display */}
+          {mockApi.expiresAt && (
+            <div className="mt-2 flex items-center gap-2">
+              <ClockIcon className="w-4 h-4 text-gray-500" />
+              <span
+                className={`text-sm font-medium ${
+                  getTimeUntilExpiry(mockApi.expiresAt).isExpired
+                    ? "text-red-600"
+                    : "text-gray-600"
+                }`}
+              >
+                {getTimeUntilExpiry(mockApi.expiresAt).text}
+              </span>
+            </div>
+          )}
         </div>
       </CardHeader>
 
@@ -230,10 +288,14 @@ function ApiEndpoint({ mockApi, onTest, onDelete }: ApiEndpointProps) {
                                 url += `?${queryString}`;
                               }
                             }
-                            copyToClipboard(url);
+                            copyToClipboard(url, `url-${mockApi.id}`);
                           }}
                         >
-                          <CopyIcon className="w-3 h-3" />
+                          {copiedStates[`url-${mockApi.id}`] ? (
+                            <CheckIcon className="w-3 h-3 text-green-600" />
+                          ) : (
+                            <CopyIcon className="w-3 h-3" />
+                          )}
                         </Button>
                       </div>
                     </div>
@@ -302,11 +364,20 @@ function ApiEndpoint({ mockApi, onTest, onDelete }: ApiEndpointProps) {
                                 className="absolute top-2 right-2"
                                 onClick={() =>
                                   copyToClipboard(
-                                    JSON.stringify(mockApi.requestBody, null, 2)
+                                    JSON.stringify(
+                                      mockApi.requestBody,
+                                      null,
+                                      2
+                                    ),
+                                    `request-${mockApi.id}`
                                   )
                                 }
                               >
-                                <CopyIcon className="w-3 h-3" />
+                                {copiedStates[`request-${mockApi.id}`] ? (
+                                  <CheckIcon className="w-3 h-3 text-green-600" />
+                                ) : (
+                                  <CopyIcon className="w-3 h-3" />
+                                )}
                               </Button>
                             </div>
                             <Textarea
@@ -339,8 +410,17 @@ function ApiEndpoint({ mockApi, onTest, onDelete }: ApiEndpointProps) {
                   <h4 className="font-semibold text-gray-900">Response</h4>
                 </div>
 
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  {testResult ? (
+                <div className="bg-muted p-4 rounded-lg">
+                  {isTesting ? (
+                    <div className="flex items-center justify-center py-8">
+                      <div className="text-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                        <p className="text-sm text-muted-foreground">
+                          Testing API...
+                        </p>
+                      </div>
+                    </div>
+                  ) : testResult ? (
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium text-gray-700">
@@ -365,7 +445,7 @@ function ApiEndpoint({ mockApi, onTest, onDelete }: ApiEndpointProps) {
                           Response Body
                         </label>
                         <div className="relative">
-                          <pre className="bg-white p-3 rounded border text-xs font-mono overflow-x-auto max-h-40">
+                          <pre className="bg-card p-3 rounded border text-xs font-mono overflow-x-auto max-h-40 text-card-foreground">
                             {JSON.stringify(testResult.data, null, 2)}
                           </pre>
                           <Button
@@ -374,11 +454,16 @@ function ApiEndpoint({ mockApi, onTest, onDelete }: ApiEndpointProps) {
                             className="absolute top-2 right-2"
                             onClick={() =>
                               copyToClipboard(
-                                JSON.stringify(testResult.data, null, 2)
+                                JSON.stringify(testResult.data, null, 2),
+                                `response-${mockApi.id}`
                               )
                             }
                           >
-                            <CopyIcon className="w-3 h-3" />
+                            {copiedStates[`response-${mockApi.id}`] ? (
+                              <CheckIcon className="w-3 h-3 text-green-600" />
+                            ) : (
+                              <CopyIcon className="w-3 h-3" />
+                            )}
                           </Button>
                         </div>
                       </div>
@@ -387,7 +472,7 @@ function ApiEndpoint({ mockApi, onTest, onDelete }: ApiEndpointProps) {
                     <div className="text-center py-8 text-gray-500">
                       <PlayIcon className="w-8 h-8 mx-auto mb-2 opacity-50" />
                       <p className="text-sm">
-                        Click "Try it out" to test this endpoint
+                        Click &quot;Try it out&quot; to test this endpoint
                       </p>
                     </div>
                   )}
@@ -397,24 +482,52 @@ function ApiEndpoint({ mockApi, onTest, onDelete }: ApiEndpointProps) {
 
             {/* Response Schema */}
             <div className="space-y-4">
-              <h4 className="font-semibold text-gray-900 flex items-center gap-2">
-                <CodeIcon className="w-4 h-4" />
-                Response Schema
-              </h4>
-              <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="flex items-center justify-between">
+                <h4 className="font-semibold text-gray-900 flex items-center gap-2">
+                  <CodeIcon className="w-4 h-4" />
+                  Response Schema
+                </h4>
+                {mockApi.isDynamic && (
+                  <div className="group relative">
+                    <Badge className="bg-accent text-accent-foreground border-border text-xs">
+                      Dynamic Response
+                    </Badge>
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-popover text-popover-foreground text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10 shadow-lg border border-border">
+                      This response generates random data each time
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-popover"></div>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div className="bg-muted p-4 rounded-lg">
                 <div className="relative">
-                  <pre className="bg-white p-3 rounded border text-xs font-mono overflow-x-auto max-h-60">
-                    {JSON.stringify(mockApi.response, null, 2)}
+                  <pre className="bg-card p-3 rounded border text-xs font-mono overflow-x-auto max-h-60 text-card-foreground">
+                    {JSON.stringify(
+                      mockApi.response.data || mockApi.response,
+                      null,
+                      2
+                    )}
                   </pre>
                   <Button
                     size="sm"
                     variant="outline"
                     className="absolute top-2 right-2"
                     onClick={() =>
-                      copyToClipboard(JSON.stringify(mockApi.response, null, 2))
+                      copyToClipboard(
+                        JSON.stringify(
+                          mockApi.response.data || mockApi.response,
+                          null,
+                          2
+                        ),
+                        `schema-${mockApi.id}`
+                      )
                     }
                   >
-                    <CopyIcon className="w-3 h-3" />
+                    {copiedStates[`schema-${mockApi.id}`] ? (
+                      <CheckIcon className="w-3 h-3 text-green-600" />
+                    ) : (
+                      <CopyIcon className="w-3 h-3" />
+                    )}
                   </Button>
                 </div>
               </div>
@@ -428,25 +541,29 @@ function ApiEndpoint({ mockApi, onTest, onDelete }: ApiEndpointProps) {
 
 export function ApiDocsView({
   mockApis,
-  onBack,
   onCreateMock,
   onDeleteMock,
+  isLoadingAPIs = false,
 }: ApiDocsViewProps) {
-  const [searchTerm, setSearchTerm] = useState("");
   const [selectedMethod, setSelectedMethod] = useState<string>("all");
-  const { showToast, toasts } = useToast();
+  const { toasts } = useToast();
+
+  // Debug loading state
+  useEffect(() => {
+    console.log(
+      "ApiDocsView - isLoadingAPIs:",
+      isLoadingAPIs,
+      "mockApis.length:",
+      mockApis.length
+    );
+  }, [isLoadingAPIs, mockApis.length]);
 
   const filteredApis = mockApis.filter((api) => {
-    const matchesSearch =
-      api.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      api.endpoint.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      api.description.toLowerCase().includes(searchTerm.toLowerCase());
-
     const matchesMethod =
       selectedMethod === "all" ||
       api.method.toLowerCase() === selectedMethod.toLowerCase();
 
-    return matchesSearch && matchesMethod;
+    return matchesMethod;
   });
 
   const handleTest = (mockApi: MockAPI, testData?: any) => {
@@ -554,14 +671,29 @@ export function ApiDocsView({
 
       {/* API Endpoints */}
       <div className="container mx-auto px-4 py-6">
-        {filteredApis.length === 0 ? (
+        {isLoadingAPIs ? (
+          <div className="space-y-6">
+            {/* API Groups */}
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                Available Endpoints
+              </h2>
+              <div className="flex items-center justify-center py-8">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                  <p className="text-muted-foreground">Loading APIs...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : filteredApis.length === 0 ? (
           <div className="text-center py-12">
             <CodeIcon className="w-12 h-12 mx-auto text-gray-400 mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
               No APIs found
             </h3>
             <p className="text-gray-600">
-              {searchTerm || selectedMethod !== "all"
+              {selectedMethod !== "all"
                 ? "Try adjusting your filter criteria"
                 : "Create your first mock API to get started"}
             </p>

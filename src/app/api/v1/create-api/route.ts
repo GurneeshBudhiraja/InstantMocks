@@ -62,10 +62,12 @@ export async function POST(req: Request) {
       throw new Error("Failed to get all user created APIs");
     }
     const existingPaths = allUserCreatedAPIs.filter((api) => api.path === transformedPath) as unknown as string[]
-    console.log("✈️ existingPaths")
+    const existingPathMethods = allUserCreatedAPIs.filter((api) => api.apiMethod === validatedData.apiMethod) as unknown as string[]
+    console.log("📍 allUserCreatedAPIs")
     console.log(allUserCreatedAPIs)
-    if ((existingPaths)?.length > 0) {
-      return NextResponse.json({ success: false, error: "Path already exists", data: {} }, { status: 400 });
+
+    if ((existingPaths)?.length > 0 && (existingPathMethods)?.length > 0) {
+      return NextResponse.json({ success: false, error: "Path and method already exists", data: {} }, { status: 400 });
     }
 
 

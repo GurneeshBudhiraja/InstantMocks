@@ -40,7 +40,7 @@ export function Toast({ message, type, duration = 3000, onClose }: ToastProps) {
 
   return (
     <div
-      className={`fixed top-4 right-4 z-50 p-4 rounded-lg border shadow-lg ${getBgColor()} animate-in slide-in-from-right-full`}
+      className={`fixed bottom-4 right-4 z-50 p-4 rounded-lg border shadow-lg ${getBgColor()} animate-in slide-in-from-right-full`}
     >
       <div className="flex items-center gap-3">
         {getIcon()}

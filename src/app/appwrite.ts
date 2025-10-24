@@ -3,7 +3,7 @@ import { Client, Databases, ID, Query } from "node-appwrite";
 import z from "zod";
 import { CreateAPIBodySchema } from "./api/v1/create-api/route";
 
-const initAppwrite = () => {
+export const initAppwrite = async () => {
   try {
     const client = new Client();
     client.setEndpoint(process.env.NEXT_APPWRITE_ENDPOINT);
@@ -21,7 +21,7 @@ export async function createMockAPI(MockAPI: Omit<z.infer<typeof CreateAPIBodySc
   response?: string;
 }) {
   try {
-    const client = initAppwrite();
+    const client = await initAppwrite();
     if (!client) {
       throw new Error("Failed to initialize Appwrite client");
     }
@@ -52,7 +52,7 @@ export async function createMockAPI(MockAPI: Omit<z.infer<typeof CreateAPIBodySc
 
 export async function getAPIData(apiId: string) {
   try {
-    const client = initAppwrite()
+    const client = await initAppwrite()
     if (!client) {
       throw new Error("Failed to initialize Appwrite client");
     }
@@ -74,7 +74,7 @@ export async function getAPIData(apiId: string) {
 
 export async function getAllThePathBasedOnUserId(userId: string) {
   try {
-    const client = initAppwrite()
+    const client = await initAppwrite()
     if (!client) {
       throw new Error("Failed to initialize Appwrite client");
     }
@@ -96,7 +96,7 @@ export async function getAllThePathBasedOnUserId(userId: string) {
 
 export async function deleteMockAPI(apiId: string) {
   try {
-    const client = initAppwrite()
+    const client = await initAppwrite()
     if (!client) {
       throw new Error("Failed to initialize Appwrite client");
     }

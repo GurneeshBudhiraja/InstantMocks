@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { CreateMockDialog, MockAPI } from "@/components/dashboard-page";
 import { ApiDocsView } from "@/components/dashboard-page/api-docs-view";
-import { ErrorModal } from "@/components/ui/error-modal";
+import { useToast } from "@/components/ui/toast";
 import { DeleteConfirmationModal } from "@/components/ui/delete-confirmation-modal";
 import { getAllThePathBasedOnUserId, deleteMockAPI } from "@/app/appwrite";
 import { ID } from "node-appwrite";
@@ -22,17 +22,8 @@ export default function DashboardPage() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingMock, setEditingMock] = useState<MockAPI | null>(null);
   const [userId, setUserId] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<{
-    isOpen: boolean;
-    title: string;
-    message: string;
-    details?: string;
-  }>({
-    isOpen: false,
-    title: "",
-    message: "",
-  });
+  const [isLoadingAPIs, setIsLoadingAPIs] = useState(true);
+  const { showToast, toasts } = useToast();
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
     isOpen: boolean;
     apiId: string;
@@ -48,7 +39,9 @@ export default function DashboardPage() {
   useEffect(() => {
     const initializeUser = async () => {
       try {
-        setIsLoading(true);
+        console.log("Starting API initialization...");
+        console.log("Current loading state:", isLoadingAPIs);
+        setIsLoadingAPIs(true);
 
         // Check for existing userId in localStorage
         let currentUserId = localStorage.getItem("userId");
@@ -57,18 +50,33 @@ export default function DashboardPage() {
           // Generate new userId using Appwrite ID
           currentUserId = ID.unique();
           localStorage.setItem("userId", currentUserId);
+          console.log("Generated new userId:", currentUserId);
+        } else {
+          console.log("Using existing userId:", currentUserId);
         }
 
         setUserId(currentUserId);
 
         // Fetch APIs from server
-        const apis = await getAllThePathBasedOnUserId(currentUserId);
-        if (apis) {
-          console.log("Fetched APIs:", apis);
+        console.log("Fetching APIs for userId:", currentUserId);
+        const apis = await Promise.race([
+          getAllThePathBasedOnUserId(currentUserId),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error("API fetch timeout")), 10000)
+          ),
+        ]);
+        console.log("Received APIs from server:", apis);
+
+        if (apis && Array.isArray(apis) && apis.length > 0) {
           // Transform server data to match MockAPI interface
           const transformedApis: MockAPI[] = apis.map((api) => {
             const fullUrl = `${getBaseUrl()}/api/v1/${api.$id}/${api.path}`;
             console.log("Generated URL for API:", fullUrl);
+
+            // Calculate expiry time (1 hour from creation)
+            const createdAt = new Date(api.$createdAt);
+            const expiresAt = new Date(createdAt.getTime() + 60 * 60 * 1000); // Add 1 hour
+
             return {
               id: api.$id,
               name: api.title,
@@ -83,32 +91,38 @@ export default function DashboardPage() {
               requestBody: {},
               // Add the full API URL for display
               fullApiUrl: fullUrl,
+              expiresAt: expiresAt.toISOString(),
             };
           });
+          console.log("Transformed APIs:", transformedApis);
           setMockApis(transformedApis);
+        } else {
+          console.log("No APIs found, setting empty array");
+          setMockApis([]);
         }
       } catch (error) {
         console.error("Error initializing user:", error);
-        setError({
-          isOpen: true,
-          title: "Initialization Error",
-          message:
-            "Failed to initialize the dashboard. Please refresh the page.",
-          details: error instanceof Error ? error.message : "Unknown error",
-        });
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error";
+        showToast(`Failed to load APIs: ${errorMessage}`, "error");
+        setMockApis([]);
       } finally {
-        setIsLoading(false);
+        console.log("API initialization complete, setting loading to false");
+        console.log("APIs loaded:", mockApis.length);
+        setIsLoadingAPIs(false);
+        console.log("Loading state set to false");
       }
     };
 
     initializeUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleCreateMock = async (
     mockData: Omit<MockAPI, "id" | "createdAt">
   ) => {
     try {
-      setIsLoading(true);
+      setIsLoadingAPIs(true);
 
       // Prepare API data for server
       const apiData = {
@@ -138,12 +152,17 @@ export default function DashboardPage() {
         throw new Error(result.error || "Failed to create API");
       }
 
-      // Refetch APIs from server
+      // Fetch fresh results from backend
       const apis = await getAllThePathBasedOnUserId(userId);
       if (apis) {
-        const transformedApis: MockAPI[] = apis.map((api) => {
+        const transformedApis: MockAPI[] = apis.map((api: any) => {
           const fullUrl = `${getBaseUrl()}/api/v1/${api.$id}/${api.path}`;
-          console.log("Generated URL for new API:", fullUrl);
+          console.log("Generated URL for API after creation:", fullUrl);
+
+          // Calculate expiry time (1 hour from creation)
+          const createdAt = new Date(api.$createdAt);
+          const expiresAt = new Date(createdAt.getTime() + 60 * 60 * 1000); // Add 1 hour
+
           return {
             id: api.$id,
             name: api.title,
@@ -157,6 +176,7 @@ export default function DashboardPage() {
             queryParams: [],
             requestBody: {},
             fullApiUrl: fullUrl,
+            expiresAt: expiresAt.toISOString(),
           };
         });
         setMockApis(transformedApis);
@@ -165,16 +185,16 @@ export default function DashboardPage() {
       // Close dialog and reset form
       setIsCreateDialogOpen(false);
       setEditingMock(null);
+
+      // Show success toast
+      showToast("API created successfully!", "success");
     } catch (error) {
       console.error("Error creating API:", error);
-      setError({
-        isOpen: true,
-        title: "API Creation Failed",
-        message: "Failed to create the API. Please try again.",
-        details: error instanceof Error ? error.message : "Unknown error",
-      });
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+      showToast(`Failed to create API: ${errorMessage}`, "error");
     } finally {
-      setIsLoading(false);
+      setIsLoadingAPIs(false);
     }
   };
 
@@ -213,12 +233,7 @@ export default function DashboardPage() {
       }
     } catch (error) {
       console.error("Error deleting API:", error);
-      setError({
-        isOpen: true,
-        title: "Delete Failed",
-        message: "Failed to delete the API. Please try again.",
-        details: error instanceof Error ? error.message : "Unknown error",
-      });
+      showToast("Failed to delete API. Please try again.", "error");
     } finally {
       setIsDeleting(false);
     }
@@ -237,25 +252,6 @@ export default function DashboardPage() {
     setIsCreateDialogOpen(true);
   };
 
-  const closeErrorModal = () => {
-    setError({
-      isOpen: false,
-      title: "",
-      message: "",
-    });
-  };
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading dashboard...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen">
       <ApiDocsView
@@ -263,6 +259,7 @@ export default function DashboardPage() {
         onBack={() => {}}
         onCreateMock={handleOpenCreateDialog}
         onDeleteMock={handleDeleteMock}
+        isLoadingAPIs={isLoadingAPIs}
       />
 
       <CreateMockDialog
@@ -272,13 +269,7 @@ export default function DashboardPage() {
         editingMock={editingMock}
       />
 
-      <ErrorModal
-        isOpen={error.isOpen}
-        onClose={closeErrorModal}
-        title={error.title}
-        message={error.message}
-        details={error.details}
-      />
+      {toasts}
 
       <DeleteConfirmationModal
         isOpen={deleteConfirmation.isOpen}
