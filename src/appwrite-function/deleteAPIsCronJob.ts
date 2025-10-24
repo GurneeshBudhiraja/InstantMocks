@@ -24,14 +24,18 @@ export default async function deleteAPIsCronJob(context: any) {
       }
     }
     context.log("🗑️ To be deleted APIs", toBeDeletedAPIs)
-    for (const apiId of toBeDeletedAPIs) {
-      const response = await databases.deleteDocuments({
-        databaseId: process.env.NEXT_APPWRITE_DB_ID,
-        collectionId: process.env.NEXT_APPWRITE_API_COLLECTION_NAME,
-        queries: [Query.equal("$id", apiId)]
-      })
-      context.log("🗑️ Deleted API", response)
-    }
+    const deleteResponse = await databases.deleteDocuments({
+      databaseId: process.env.NEXT_APPWRITE_DB_ID,
+      collectionId: process.env.NEXT_APPWRITE_API_COLLECTION_NAME,
+      // queries: [Query.equal("$id", toBeDeletedAPIs)]
+      queries: [Query.equal("$id", ["68fb126e003a58eff927","68fb12630022867ac5e8"])]
+    })
+    context.log("🗑️ Deleted APIs", deleteResponse)
+    context.res.empty()
+    // for (const apiId of toBeDeletedAPIs) {
+
+    //   context.log("🗑️ Deleted API", response)
+    // }
   } catch (error) {
     context.error("❌ Error in `deleteAPIsCronJob`", (error as Error).message)
   }
