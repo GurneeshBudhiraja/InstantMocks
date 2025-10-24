@@ -1,11 +1,6 @@
 import { Client, Databases, Query, } from "node-appwrite";
 
-export default async function deleteAPIsCronJob({
-  req,
-  res,
-  log,
-  error,
-}) {
+export default async function deleteAPIsCronJob(context: any) {
   try {
     // setup the appwrite client
     const client = new Client();
@@ -17,7 +12,7 @@ export default async function deleteAPIsCronJob({
       databaseId: process.env.NEXT_APPWRITE_DB_ID,
       collectionId: process.env.NEXT_APPWRITE_API_COLLECTION_NAME,
     });
-    log("🔍 All the APIs", response)
+    context.log("🔍 All the APIs", response)
     const toBeDeletedAPIs = []
     for (const api of response.documents) {
       const { $createdAt } = api
@@ -29,17 +24,17 @@ export default async function deleteAPIsCronJob({
         toBeDeletedAPIs.push(api.$id)
       }
     }
-    log("🗑️ To be deleted APIs", toBeDeletedAPIs)
+    context.log("🗑️ To be deleted APIs", toBeDeletedAPIs)
     for (const apiId of toBeDeletedAPIs) {
       const response = await databases.deleteDocuments({
         databaseId: process.env.NEXT_APPWRITE_DB_ID,
         collectionId: process.env.NEXT_APPWRITE_API_COLLECTION_NAME,
-        queries: [Query.equal("id", apiId)]
+        queries: [Query.equal("$id", apiId)]
       })
-      log("🗑️ Deleted API", response)
+      context.log("🗑️ Deleted API", response)
     }
   } catch (error) {
-    console.log("❌ Error in `deleteAPIsCronJob`", (error as Error).message)
+    context.error("❌ Error in `deleteAPIsCronJob`", (error as Error).message)
   }
 }
 
