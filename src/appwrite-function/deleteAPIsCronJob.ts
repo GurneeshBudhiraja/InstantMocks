@@ -24,6 +24,10 @@ export default async function deleteAPIsCronJob(context: any) {
       }
     }
     context.log("🗑️ To be deleted APIs", toBeDeletedAPIs)
+    if(toBeDeletedAPIs.length === 0){
+      context.log("🗑️ No APIs to delete")
+      return context.res.empty()
+    }
     const deleteResponse = await databases.deleteDocuments({
       databaseId: process.env.NEXT_APPWRITE_DB_ID,
       collectionId: process.env.NEXT_APPWRITE_API_COLLECTION_NAME,
