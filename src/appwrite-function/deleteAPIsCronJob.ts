@@ -27,11 +27,10 @@ export default async function deleteAPIsCronJob(context: any) {
     const deleteResponse = await databases.deleteDocuments({
       databaseId: process.env.NEXT_APPWRITE_DB_ID,
       collectionId: process.env.NEXT_APPWRITE_API_COLLECTION_NAME,
-      // queries: [Query.equal("$id", toBeDeletedAPIs)]
-      queries: [Query.equal("$id", ["68fb126e003a58eff927","68fb12630022867ac5e8"])]
+      queries: [Query.equal("$id", toBeDeletedAPIs)]
     })
     context.log("🗑️ Deleted APIs", deleteResponse)
-    context.res.empty()
+    return context.res.empty()
     // for (const apiId of toBeDeletedAPIs) {
 
     //   context.log("🗑️ Deleted API", response)
