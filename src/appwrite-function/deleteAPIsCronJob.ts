@@ -1,7 +1,7 @@
 "use server"
 
 import { initAppwrite } from "@/app/appwrite";
-import { Databases, Query, } from "node-appwrite";
+import { Client, Databases, Query, } from "node-appwrite";
 
 export default async function deleteAPIsCronJob({
   req,
@@ -10,10 +10,11 @@ export default async function deleteAPIsCronJob({
   error,
 }) {
   try {
-    const client = initAppwrite();
-    if (!client) {
-      throw new Error("Failed to initialize Appwrite client");
-    }
+    // setup the appwrite client
+    const client = new Client();
+    client.setEndpoint(process.env.NEXT_APPWRITE_ENDPOINT);
+    client.setProject(process.env.NEXT_APPWRITE_PROJECT_ID);
+    client.setKey(process.env.NEXT_APPWRITE_API_KEY);
     const databases = new Databases(client);
     const response = await databases.listDocuments({
       databaseId: process.env.NEXT_APPWRITE_DB_ID,
