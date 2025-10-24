@@ -12,7 +12,6 @@ export default async function deleteAPIsCronJob(context: any) {
       databaseId: process.env.NEXT_APPWRITE_DB_ID,
       collectionId: process.env.NEXT_APPWRITE_API_COLLECTION_NAME,
     });
-    context.log("🔍 All the APIs", response)
     const toBeDeletedAPIs = []
     for (const api of response.documents) {
       const { $createdAt } = api
