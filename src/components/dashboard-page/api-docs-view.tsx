@@ -475,7 +475,7 @@ export function ApiDocsView({
             <div className="flex items-center gap-4">
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">
-                  Mock API Playground
+                  API Playground
                 </h1>
                 <p className="text-sm text-gray-600">
                   Test and explore your mock APIs
