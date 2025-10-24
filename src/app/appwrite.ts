@@ -85,7 +85,20 @@ export async function getAllThePathBasedOnUserId(userId: string) {
       collectionId: process.env.NEXT_APPWRITE_API_COLLECTION_NAME,
       queries: [Query.equal("userId", userId)]
     });
-    return response.documents
+    const availableAPIs = []
+    for (const api of response.documents) {
+      const { $createdAt } = api
+      const createdAt = new Date($createdAt)
+      const now = new Date()
+      const diffTime = Math.abs(now.getTime() - createdAt.getTime())
+      const diffHours = Math.ceil(diffTime / (1000 * 60 * 60))
+      if (diffHours <= 1) {
+        availableAPIs.push(api)
+      }
+    }
+
+    return availableAPIs
+
   } catch (error) {
     console.log("❌ Error in `getAllThePathBasedOnUserId`", (error as Error).message);
     return null
