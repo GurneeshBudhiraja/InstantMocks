@@ -1,6 +1,3 @@
-"use server"
-
-import { initAppwrite } from "@/app/appwrite";
 import { Client, Databases, Query, } from "node-appwrite";
 
 export default async function deleteAPIsCronJob({
