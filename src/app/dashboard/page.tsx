@@ -5,7 +5,7 @@ import { CreateMockDialog, MockAPI } from "@/components/dashboard-page";
 import { ApiDocsView } from "@/components/dashboard-page/api-docs-view";
 import { useToast } from "@/components/ui/toast";
 import { DeleteConfirmationModal } from "@/components/ui/delete-confirmation-modal";
-import { getAllThePathBasedOnUserId, deleteMockAPI } from "@/app/appwrite";
+import { getAllThePathBasedOnUserId, deleteMockAPI } from "@/appwrite/appwrite";
 import { ID } from "node-appwrite";
 
 // Utility function to get the base URL

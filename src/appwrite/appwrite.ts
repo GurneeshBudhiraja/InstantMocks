@@ -1,7 +1,7 @@
 "use server";
 import { Client, Databases, ID, Query } from "node-appwrite";
 import z from "zod";
-import { CreateAPIBodySchema } from "./api/v1/create-api/route";
+import { CreateAPIBodySchema } from "../app/api/v1/create-api/route";
 
 export const initAppwrite = async () => {
   try {
@@ -96,14 +96,11 @@ export async function getAllThePathBasedOnUserId(userId: string) {
         availableAPIs.push(api)
       }
     }
-
     return availableAPIs
-
   } catch (error) {
     console.log("❌ Error in `getAllThePathBasedOnUserId`", (error as Error).message);
     return null
   }
-
 }
 
 

@@ -1,5 +1,5 @@
 import { generateDynamicResponse } from "@/app/ai";
-import { getAPIData } from "@/app/appwrite";
+import { getAPIData } from "@/appwrite/appwrite";
 import { NextRequest, NextResponse } from "next/server";
 
 type SupportedMethods = 'GET' | 'POST' | 'DELETE' | 'PUT' | 'PATCH';

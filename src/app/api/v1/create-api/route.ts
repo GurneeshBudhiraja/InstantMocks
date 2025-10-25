@@ -1,4 +1,4 @@
-import { createMockAPI, getAllThePathBasedOnUserId } from "@/app/appwrite";
+import { createMockAPI, getAllThePathBasedOnUserId } from "@/appwrite/appwrite";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -63,17 +63,9 @@ export async function POST(req: Request) {
     }
     const existingPaths = allUserCreatedAPIs.filter((api) => api.path === transformedPath)
     const existingPathMethods = existingPaths.filter((api) => api.apiMethod === validatedData.apiMethod)
-    console.log("📍 allUserCreatedAPIs")
-    console.log(allUserCreatedAPIs)
-    console.log("existingPaths")
-    console.log(existingPaths)
-    console.log("existingPathMethods")
-    console.log(existingPathMethods)
     if ((existingPaths)?.length > 0 && (existingPathMethods)?.length > 0) {
       return NextResponse.json({ success: false, error: "Path and method already exists", data: {} }, { status: 400 });
     }
-
-
 
     const { data: apiId, success } = await createMockAPI(
       {

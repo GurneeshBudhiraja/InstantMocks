@@ -7,11 +7,16 @@ export default async function deleteAPIsCronJob(context: any) {
     client.setEndpoint(process.env.NEXT_APPWRITE_ENDPOINT);
     client.setProject(process.env.NEXT_APPWRITE_PROJECT_ID);
     client.setKey(process.env.NEXT_APPWRITE_API_KEY);
+
     const databases = new Databases(client);
+
+    // Gets all the APIs from the DB
     const response = await databases.listDocuments({
       databaseId: process.env.NEXT_APPWRITE_DB_ID,
       collectionId: process.env.NEXT_APPWRITE_API_COLLECTION_NAME,
     });
+
+    // Array to store the APIs that have expired
     const toBeDeletedAPIs = []
     for (const api of response.documents) {
       const { $createdAt } = api
@@ -24,10 +29,13 @@ export default async function deleteAPIsCronJob(context: any) {
       }
     }
     context.log("🗑️ To be deleted APIs", toBeDeletedAPIs)
-    if(toBeDeletedAPIs.length === 0){
+
+    if (toBeDeletedAPIs.length === 0) {
       context.log("🗑️ No APIs to delete")
       return context.res.empty()
     }
+
+    // Deletes the documents from the DB using the $id of the APIs
     const deleteResponse = await databases.deleteDocuments({
       databaseId: process.env.NEXT_APPWRITE_DB_ID,
       collectionId: process.env.NEXT_APPWRITE_API_COLLECTION_NAME,
@@ -35,10 +43,6 @@ export default async function deleteAPIsCronJob(context: any) {
     })
     context.log("🗑️ Deleted APIs", deleteResponse)
     return context.res.empty()
-    // for (const apiId of toBeDeletedAPIs) {
-
-    //   context.log("🗑️ Deleted API", response)
-    // }
   } catch (error) {
     context.error("❌ Error in `deleteAPIsCronJob`", (error as Error).message)
   }
