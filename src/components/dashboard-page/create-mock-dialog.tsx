@@ -53,9 +53,8 @@ export function CreateMockDialog({
     editingMock?.response ? true : true
   );
   const [originalJson, setOriginalJson] = useState<string>("");
-  const [isTypeValid, setIsTypeValid] = useState(true);
-  const [typeError, setTypeError] = useState<string>("");
-  const [showPillView, setShowPillView] = useState(false);
+  const [_isTypeValid, setIsTypeValid] = useState(true);
+  const [_typeError, setTypeError] = useState<string>("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

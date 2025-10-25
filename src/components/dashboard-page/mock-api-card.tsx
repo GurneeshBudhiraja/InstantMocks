@@ -11,7 +11,7 @@ import {
   ClockIcon,
 } from "lucide-react";
 import { useState } from "react";
-import { MockAPI } from "./types";
+import { MockAPI } from "@/app/types/global";
 
 interface MockApiCardProps {
   mockApi: MockAPI;

@@ -115,7 +115,6 @@ export default function DashboardPage() {
     };
 
     initializeUser();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleCreateMock = async (
