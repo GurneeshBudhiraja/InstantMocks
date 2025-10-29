@@ -19,7 +19,6 @@ const getBaseUrl = () => {
 
 export default function DashboardPage() {
   const [mockApis, setMockApis] = useState<MockAPI[]>([]);
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingMock, setEditingMock] = useState<MockAPI | null>(null);
   const [userId, setUserId] = useState<string>("");
   const [isLoadingAPIs, setIsLoadingAPIs] = useState(true);
@@ -126,7 +125,7 @@ export default function DashboardPage() {
       // Prepare API data for server
       const apiData = {
         title: mockData.name,
-        description: mockData.description,
+        description: mockData.description || "",
         path: mockData.endpoint,
         apiMethod: mockData.method.toLowerCase(),
         userId: userId,
@@ -135,6 +134,8 @@ export default function DashboardPage() {
           data: mockData.response,
         },
       };
+
+      console.log("Sending API data to server:", apiData);
 
       // Call the create API endpoint
       const response = await fetch("/api/v1/create-api", {
@@ -181,8 +182,7 @@ export default function DashboardPage() {
         setMockApis(transformedApis);
       }
 
-      // Close dialog and reset form
-      setIsCreateDialogOpen(false);
+      // Reset edit state
       setEditingMock(null);
 
       // Show success toast
@@ -248,7 +248,6 @@ export default function DashboardPage() {
 
   const handleOpenCreateDialog = () => {
     setEditingMock(null);
-    setIsCreateDialogOpen(true);
   };
 
   return (
@@ -256,16 +255,9 @@ export default function DashboardPage() {
       <ApiDocsView
         mockApis={mockApis}
         onBack={() => {}}
-        onCreateMock={handleOpenCreateDialog}
+        onCreateMock={(payload) => handleCreateMock(payload)}
         onDeleteMock={handleDeleteMock}
         isLoadingAPIs={isLoadingAPIs}
-      />
-
-      <CreateMockDialog
-        isOpen={isCreateDialogOpen}
-        onOpenChange={setIsCreateDialogOpen}
-        onCreateMock={handleCreateMock}
-        editingMock={editingMock}
       />
 
       {toasts}

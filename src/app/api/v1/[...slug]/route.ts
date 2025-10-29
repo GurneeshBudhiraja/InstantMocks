@@ -67,8 +67,9 @@ async function handleAllMethods(request: NextRequest, method: SupportedMethods) 
       }
 
       // Extract the JSON data from the aiDynamicResponse
+      // This regex will capture any data between ```json and the next ```
       const match = typeof aiDynamicResponse === "string"
-        ? aiDynamicResponse.match(/```json\s*({[\s\S]*})\s*```/)
+        ? aiDynamicResponse.match(/```json\s*([\s\S]*?)\s*```/)
         : null;
 
       console.log("🔗 Match")

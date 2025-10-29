@@ -5,6 +5,14 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   ChevronDownIcon,
   ChevronRightIcon,
@@ -18,14 +26,16 @@ import {
   PlusIcon,
   TrashIcon,
   CheckIcon,
+  WandIcon,
 } from "lucide-react";
 import { MockAPI } from "@/app/types/global";
+import { generateSchemaForAPI } from "@/app/ai";
 import { useToast } from "@/components/ui/toast";
 
 interface ApiDocsViewProps {
   mockApis: MockAPI[];
   onBack: () => void;
-  onCreateMock?: () => void;
+  onCreateMock?: (payload: Omit<MockAPI, "id" | "createdAt">) => void;
   onDeleteMock?: (id: string) => void;
   isLoadingAPIs?: boolean;
 }
@@ -546,7 +556,19 @@ export function ApiDocsView({
   isLoadingAPIs = false,
 }: ApiDocsViewProps) {
   const [selectedMethod, setSelectedMethod] = useState<string>("all");
-  const { toasts } = useToast();
+  const [showComposer, setShowComposer] = useState<boolean>(false);
+  const [draft, setDraft] = useState<Omit<MockAPI, "id" | "createdAt">>({
+    name: "",
+    method: "GET",
+    endpoint: "",
+    status: 200,
+    description: "",
+    response: {},
+    isDynamic: false,
+  });
+  const [responseText, setResponseText] = useState<string>("");
+  const [isGenerating, setIsGenerating] = useState<boolean>(false);
+  const { toasts, showToast } = useToast();
 
   // Debug loading state
   useEffect(() => {
@@ -607,7 +629,7 @@ export function ApiDocsView({
               </div>
               {onCreateMock && (
                 <Button
-                  onClick={onCreateMock}
+                  onClick={() => setShowComposer(true)}
                   className="bg-primary hover:bg-primary/90 text-primary-foreground"
                 >
                   <PlusIcon className="w-4 h-4 mr-2" />
@@ -671,6 +693,209 @@ export function ApiDocsView({
 
       {/* API Endpoints */}
       <div className="container mx-auto px-4 py-6">
+        {/* Inline Composer - always available when toggled */}
+        {showComposer && (
+          <div
+            className={`mb-4 border border-border rounded-md p-4 bg-card shadow-sm ${
+              isGenerating ? "opacity-70 pointer-events-none" : ""
+            }`}
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">
+                  API Name
+                </label>
+                <Input
+                  value={draft.name}
+                  onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+                  placeholder="e.g., Get User Profile"
+                  className="rounded-md border-border"
+                  disabled={isGenerating}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">
+                  Endpoint
+                </label>
+                <div className="flex">
+                  <Select
+                    value={draft.method}
+                    onValueChange={(v) => setDraft({ ...draft, method: v })}
+                    disabled={isGenerating}
+                  >
+                    <SelectTrigger className="w-28 rounded-r-none border-border">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {["GET", "POST", "PUT", "DELETE", "PATCH"].map((m) => (
+                        <SelectItem key={m} value={m}>
+                          {m}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Input
+                    value={draft.endpoint}
+                    onChange={(e) =>
+                      setDraft({ ...draft, endpoint: e.target.value })
+                    }
+                    placeholder="/api/users"
+                    className="flex-1 rounded-l-none border-border"
+                    disabled={isGenerating}
+                  />
+                </div>
+              </div>
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-sm font-medium text-gray-700">
+                  Description
+                </label>
+                <Textarea
+                  value={draft.description}
+                  onChange={(e) =>
+                    setDraft({ ...draft, description: e.target.value })
+                  }
+                  rows={2}
+                  className="rounded-md border-border"
+                  placeholder="Describe what this API does..."
+                  disabled={isGenerating}
+                />
+              </div>
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-sm font-medium text-gray-700">
+                  Response (JSON)
+                </label>
+                <div className="relative">
+                  <Textarea
+                    value={responseText}
+                    onChange={(e) => setResponseText(e.target.value)}
+                    rows={8}
+                    className="font-mono text-sm rounded-md border-border pr-12"
+                    placeholder='Enter JSON schema or plain-English instructions for AI (e.g., "user object with id:number, name:string, email:string")'
+                    disabled={isGenerating}
+                  />
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="outline"
+                    className="absolute bottom-2 right-2 h-8 w-8"
+                    onClick={async () => {
+                      setIsGenerating(true);
+                      try {
+                        const prompt = (
+                          responseText ||
+                          draft.description ||
+                          draft.name ||
+                          "API response schema"
+                        ).trim();
+                        const generated = await generateSchemaForAPI(prompt);
+                        if (generated) {
+                          const next = JSON.stringify(generated, null, 2);
+                          setResponseText((prev) =>
+                            prev === next ? next + "\n" : next
+                          );
+                        }
+                      } catch (e) {
+                        console.error(e);
+                      } finally {
+                        setIsGenerating(false);
+                      }
+                    }}
+                    title="Generate schema with AI"
+                    disabled={isGenerating}
+                  >
+                    <WandIcon className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="flex items-center justify-between mt-1">
+                  <span className="text-xs text-muted-foreground">
+                    You can paste JSON or describe the response for AI
+                  </span>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      setDraft({ ...draft, isDynamic: !draft.isDynamic })
+                    }
+                    className={`h-8 px-2 text-xs ${
+                      draft.isDynamic
+                        ? "border-primary text-primary bg-primary/10"
+                        : ""
+                    }`}
+                    title="Toggle dynamic response"
+                    disabled={isGenerating}
+                  >
+                    {draft.isDynamic ? "Dynamic: On" : "Dynamic: Off"}
+                  </Button>
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 mt-3">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowComposer(false);
+                  setDraft({
+                    name: "",
+                    method: "GET",
+                    endpoint: "",
+                    status: 200,
+                    description: "",
+                    response: {},
+                    isDynamic: false,
+                  });
+                  setResponseText("");
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={async () => {
+                  if (!responseText.trim()) {
+                    showToast(
+                      "Add a JSON response or click the AI wand to generate one",
+                      "error"
+                    );
+                    return;
+                  }
+                  let parsed: any = {};
+                  try {
+                    parsed = JSON.parse(responseText);
+                  } catch {
+                    showToast(
+                      "Invalid JSON. Fix it or use the AI wand to generate",
+                      "error"
+                    );
+                    return;
+                  }
+                  const payload = { ...draft, response: parsed } as Omit<
+                    MockAPI,
+                    "id" | "createdAt"
+                  >;
+                  if (onCreateMock) {
+                    onCreateMock(payload);
+                  }
+                  setShowComposer(false);
+                  setDraft({
+                    name: "",
+                    method: "GET",
+                    endpoint: "",
+                    status: 200,
+                    description: "",
+                    response: {},
+                    isDynamic: false,
+                  });
+                  setResponseText("");
+                }}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                disabled={isGenerating}
+              >
+                Create API
+              </Button>
+            </div>
+          </div>
+        )}
+
         {isLoadingAPIs ? (
           <div className="space-y-6">
             {/* API Groups */}
