@@ -1,12 +1,11 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import { inter, poppins, roboto, robotoMono } from "./fonts";
-import { ThemeProvider } from "@/components/theme-provider";
+import type { Metadata } from 'next';
+import './globals.css';
+import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
-  title: "InstantMocks - Dynamic API Sandbox",
+  title: 'InstantMocks - Dynamic API Sandbox',
   description:
-    "Create, edit, and share mock API endpoints effortlessly with AI-powered realistic responses. Accelerate your development workflow with ephemeral, customizable mock data.",
+    'Create, edit, and share mock API endpoints effortlessly with AI-powered realistic responses. Accelerate your development workflow with ephemeral, customizable mock data.',
 };
 
 export default function RootLayout({
@@ -16,9 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${inter.variable} ${robotoMono.variable} ${roboto.variable} ${poppins.variable} antialiased relative`}
-      >
+      <body className={`antialiased relative`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="light"

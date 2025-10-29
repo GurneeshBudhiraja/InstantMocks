@@ -49,7 +49,7 @@ body {
   --sidebar-ring: #8b5e34;
   --font-sans: "Geist Sans", sans-serif;
   --font-serif: "Playfair Display", serif;
-  --font-mono: "Fira Code", monospace;
+  /* --font-mono: "Fira Code", monospace; */
   --radius: 0.625rem;
   --shadow-x: 0px;
   --shadow-y: 1px;
@@ -109,7 +109,7 @@ body {
   --sidebar-ring: #e6d5b8;
   --font-sans: "Geist Sans", sans-serif;
   --font-serif: "Playfair Display", serif;
-  --font-mono: "Fira Code", monospace;
+  /* --font-mono: "Fira Code", monospace; */
   --radius: 0.625rem;
   --shadow-x: 0px;
   --shadow-y: 1px;
@@ -171,10 +171,10 @@ body {
   --font-serif: var(--font-serif);
 
   /* custom fonts */
-  --font-inter: var(--font-inter);
+  /* --font-inter: var(--font-inter);
   --font-roboto-mono: var(--font-roboto-mono);
   --font-roboto: var(--font-roboto);
-  --font-poppins: var(--font-poppins);
+  --font-poppins: var(--font-poppins); */
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
