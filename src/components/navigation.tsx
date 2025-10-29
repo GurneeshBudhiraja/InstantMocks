@@ -60,22 +60,14 @@ export default function Navigation() {
             className="hidden md:flex"
             showArrow={false}
           />
-          <Button
-            size="sm"
-            className="relative bg-black hover:bg-gray-800 cursor-pointer overflow-hidden group transition-all duration-300 border border-gray-700 hover:border-white/30"
-          >
-            {/* Minimalistic shiny effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></div>
-            <div className="absolute inset-0 rounded-md border border-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-            {/* Button content */}
+          <Button size="sm" variant="outline" className="cursor-pointer">
             <Link
-              className="relative flex items-center space-x-2"
+              className="flex items-center space-x-2"
               href={"https://github.com/GurneeshBudhiraja/InstantMocks"}
               target="_blank"
             >
-              <GithubIcon className="h-4 w-4 text-white" />
-              <span className="hidden sm:inline-block text-sm font-medium text-white">
+              <GithubIcon className="h-4 w-4" />
+              <span className="hidden sm:inline-block text-sm font-medium">
                 GitHub
               </span>
             </Link>

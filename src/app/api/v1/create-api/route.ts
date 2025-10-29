@@ -15,7 +15,7 @@ export const CreateAPIBodySchema = z.object({
   userId: z.string().min(1, "User ID is required"),
   response: z.object({
     type: z.enum(["fixed", "dynamic"]),
-    data: z.record(z.string(), z.union([z.string(), z.number(), z.boolean(), z.null(), z.undefined(), z.record(z.string(), z.unknown())]))
+    data: z.any()
   })
 });
 
@@ -45,6 +45,7 @@ export async function POST(req: Request) {
     const validation = validateRequestBody(CreateAPIBodySchema, body);
 
     if (!validation.success) {
+      console.log("🔍 Validation error in `create-api`", validation.error);
       return NextResponse.json(
         { success: false, error: validation.error, data: {} },
         { status: 400 }

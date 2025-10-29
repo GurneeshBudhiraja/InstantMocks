@@ -46,20 +46,20 @@ export default function HeroSection() {
     // <AuroraBackground>
     <section
       ref={heroRef}
-      className="relative h-screen flex items-center justify-center overflow-hidden"
+      className="relative h-screen flex items-center justify-center overflow-hidden bg-background"
     >
       <div className="relative z-20 container mx-auto px-4 text-center">
         <div className="max-w-4xl mx-auto">
           <h1
             ref={titleRef}
-            className="text-5xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-zinc-700 to-zinc-900 mb-6 leading-tight font-poppins "
+            className="text-5xl md:text-7xl font-bold text-foreground mb-6 leading-tight font-poppins tracking-tight"
           >
             <span>Instant</span>Mocks
           </h1>
 
           <p
             ref={subtitleRef}
-            className="text-xl text-zinc-700 mb-8 max-w-3xl mx-auto font-roboto font-medium"
+            className="text-base md:text-lg text-muted-foreground mb-10 max-w-3xl mx-auto font-roboto"
           >
             Create, edit, and share AI-powered mock API endpoints instantly to
             speed up development with ephemeral, customizable data.
@@ -68,13 +68,13 @@ export default function HeroSection() {
           {/* CTA Buttons */}
           <div
             ref={ctaRef}
-            className="flex flex-col sm:flex-row gap-4 justify-center mb-12"
+            className="flex flex-col sm:flex-row gap-3 justify-center mb-10"
           >
             <Link href="#features" className="">
               <Button
                 variant="outline"
                 size="lg"
-                className="text-lg px-8 py-6 borde hover:bg-accent cursor-pointer font-roboto-mono border-[2px] border-[#0000003b] shadow-[inset_0px_0px_10px_#0000006e] "
+                className="h-11 md:h-12 px-5 md:px-6 text-sm md:text-base font-roboto-mono rounded-md"
               >
                 Features
               </Button>
@@ -82,7 +82,7 @@ export default function HeroSection() {
             <DashboardButton
               text="Get Started"
               size="lg"
-              className="text-lg px-8 py-6 font-roboto-mono depth-shadow-inset"
+              className="h-11 md:h-12 px-5 md:px-6 text-sm md:text-base font-roboto-mono rounded-md"
             />
           </div>
         </div>

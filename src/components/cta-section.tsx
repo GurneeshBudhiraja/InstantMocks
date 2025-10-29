@@ -59,13 +59,13 @@ export default function CTASection() {
   return (
     <section
       ref={sectionRef}
-      className="relative py-20 bg-gradient-to-br from-zinc-800 to-zinc-950 overflow-hidden"
+      className="relative py-20 bg-secondary overflow-hidden"
     >
       <FloatingIcons />
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center max-w-4xl mx-auto">
           <div ref={contentRef}>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 font-poppins leading-snug bg-gradient-to-br from-zinc-100 to-zinc-300 text-transparent bg-clip-text">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 font-poppins leading-snug text-foreground">
               Ready to Accelerate Your Development?
             </h2>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
@@ -73,7 +73,7 @@ export default function CTASection() {
                 text="Start Building"
                 size="lg"
                 variant="outline"
-                className="text-lg px-8 py-6 font-roboto-mono depth-shadow-inset-dark "
+                className="text-lg px-8 py-6 font-roboto-mono"
               />
             </div>
           </div>

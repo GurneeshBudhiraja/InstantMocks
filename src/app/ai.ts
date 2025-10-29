@@ -62,7 +62,7 @@ export async function generateSchemaForAPI(instructions: string) {
     const ai = new GoogleGenAI({
       apiKey: process.env.NEXT_AI_KEY,
     });
-    console.log("🤖 Schema from AI",);
+    console.log("📋 Generating the schema for the API");
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: `<system_prompt>${GENERATE_SCHEMA_FOR_API_PROMPT}</system_prompt><instructions>${instructions}</instructions>`,
@@ -73,6 +73,7 @@ export async function generateSchemaForAPI(instructions: string) {
         temperature: lastTemperature
       }
     });
+    console.log("🤖 Schema from AI",);
     console.log(response.text)
     const match = typeof response.text === "string"
       ? response.text.match(/```json\s*({[\s\S]*})\s*```/)
