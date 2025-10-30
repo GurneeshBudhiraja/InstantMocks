@@ -71,7 +71,7 @@ export default function HeroSection() {
               className="flex flex-col sm:flex-row gap-3 justify-center mb-10"
             >
               <Link
-                href={'https://www.youtube.com/watch?v=qWWhRj67bEw'}
+                href={'https://www.youtube.com/watch?v=8V3X67cZCSA'}
                 target="_blank"
                 className=""
               >
