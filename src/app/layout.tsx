@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
+import { inter, firaCode } from './fonts';
 
 export const metadata: Metadata = {
   title: 'InstantMocks - Dynamic API Sandbox',
@@ -16,7 +17,6 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Use system fonts to avoid any external font loading issues */}
         <meta
           httpEquiv="Cache-Control"
           content="no-cache, no-store, must-revalidate"
@@ -24,7 +24,9 @@ export default function RootLayout({
         <meta httpEquiv="Pragma" content="no-cache" />
         <meta httpEquiv="Expires" content="0" />
       </head>
-      <body className={`antialiased relative`}>
+      <body
+        className={`antialiased relative ${inter.variable} ${firaCode.variable}`}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
