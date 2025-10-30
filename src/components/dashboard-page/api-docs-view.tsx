@@ -163,8 +163,8 @@ function ApiEndpoint({ mockApi, onTest, onDelete }: ApiEndpointProps) {
         className="cursor-pointer hover:bg-gray-50 transition-colors"
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center flex-wrap gap-2 md:gap-3">
             <Badge
               className={`${getMethodColor(
                 mockApi.method
@@ -172,7 +172,7 @@ function ApiEndpoint({ mockApi, onTest, onDelete }: ApiEndpointProps) {
             >
               {mockApi.method}
             </Badge>
-            <code className="text-sm font-mono text-gray-700 bg-gray-100 px-2 py-1 rounded">
+            <code className="text-sm font-mono text-gray-700 bg-gray-100 px-2 py-1 rounded break-all max-w-full">
               {mockApi.endpoint}
             </code>
             <Badge
@@ -194,7 +194,7 @@ function ApiEndpoint({ mockApi, onTest, onDelete }: ApiEndpointProps) {
               className="text-xs bg-green-50 border-green-200 text-green-700 hover:bg-green-100"
             >
               <PlayIcon className="w-3 h-3 mr-1" />
-              {isTesting ? "Testing..." : "Try it out"}
+              <span className="hidden sm:inline">{isTesting ? "Testing..." : "Try it out"}</span>
             </Button>
             {onDelete && (
               <Button
@@ -610,8 +610,8 @@ export function ApiDocsView({
       {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-start sm:items-center gap-3 sm:gap-4">
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">
                   API Playground
@@ -621,9 +621,9 @@ export function ApiDocsView({
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <div className="text-sm text-gray-600">
+            <div className="flex items-center gap-2 sm:gap-4">
+              <div className="text-left sm:text-right">
+                <div className="text-sm text-gray-600 whitespace-nowrap">
                   {mockApis.length} endpoint{mockApis.length !== 1 ? "s" : ""}
                 </div>
               </div>
@@ -633,7 +633,7 @@ export function ApiDocsView({
                   className="bg-primary hover:bg-primary/90 text-primary-foreground"
                 >
                   <PlusIcon className="w-4 h-4 mr-2" />
-                  Create Mock API
+                  <span className="hidden sm:inline">Create Mock API</span>
                 </Button>
               )}
             </div>
@@ -645,7 +645,7 @@ export function ApiDocsView({
       <div className="bg-white border-b border-gray-200">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               {methods.map((method) => {
                 const getMethodColor = (method: string) => {
                   switch (method.toUpperCase()) {
@@ -670,7 +670,7 @@ export function ApiDocsView({
                     variant="outline"
                     size="sm"
                     onClick={() => setSelectedMethod(method)}
-                    className={`text-xs ${
+                    className={`text-xs shrink-0 ${
                       selectedMethod === method
                         ? getMethodColor(method) +
                           " hover:" +
@@ -717,13 +717,13 @@ export function ApiDocsView({
                 <label className="text-sm font-medium text-gray-700">
                   Endpoint
                 </label>
-                <div className="flex">
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-0">
                   <Select
                     value={draft.method}
                     onValueChange={(v) => setDraft({ ...draft, method: v })}
                     disabled={isGenerating}
                   >
-                    <SelectTrigger className="w-28 rounded-r-none border-border">
+                    <SelectTrigger className="w-full sm:w-28 sm:rounded-r-none border-border">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -740,7 +740,7 @@ export function ApiDocsView({
                       setDraft({ ...draft, endpoint: e.target.value })
                     }
                     placeholder="/api/users"
-                    className="flex-1 rounded-l-none border-border"
+                    className="flex-1 sm:rounded-l-none border-border"
                     disabled={isGenerating}
                   />
                 </div>
