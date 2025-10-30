@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useEffect, useRef } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Button } from "@/components/ui/button";
-import { DashboardButton } from "@/components/ui/dashboard-button";
-import { AuroraBackground } from "./ui/aurora-background";
-import Link from "next/link";
+import { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { Button } from '@/components/ui/button';
+import { DashboardButton } from '@/components/ui/dashboard-button';
+import { AuroraBackground } from './ui/aurora-background';
+import Link from 'next/link';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -23,19 +23,19 @@ export default function HeroSection() {
       tl.fromTo(
         titleRef.current,
         { y: 50, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1, ease: "power3.out" }
+        { y: 0, opacity: 1, duration: 1, ease: 'power3.out' }
       )
         .fromTo(
           subtitleRef.current,
           { y: 30, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" },
-          "-=0.5"
+          { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' },
+          '-=0.5'
         )
         .fromTo(
           ctaRef.current,
           { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
-          "-=0.3"
+          { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' },
+          '-=0.3'
         );
     }, heroRef);
 
@@ -70,13 +70,17 @@ export default function HeroSection() {
               ref={ctaRef}
               className="flex flex-col sm:flex-row gap-3 justify-center mb-10"
             >
-              <Link href="#features" className="">
+              <Link
+                href={'https://www.youtube.com/watch?v=qWWhRj67bEw'}
+                target="_blank"
+                className=""
+              >
                 <Button
                   variant="outline"
                   size="lg"
                   className="h-11 md:h-12 px-5 md:px-6 text-sm md:text-base font-roboto-mono rounded-md"
                 >
-                  Features
+                  YouTube Demo
                 </Button>
               </Link>
               <DashboardButton

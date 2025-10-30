@@ -55,16 +55,6 @@ export default function Navigation() {
     >
       <div className="mx-auto font-roboto-mono px-5">
         <div className="flex items-center justify-end h-16 gap-4">
-          <Button size="sm" variant="outline" className="cursor-pointer">
-            <Link
-              className="flex items-center space-x-2"
-              href={'https://www.youtube.com/watch?v=qWWhRj67bEw'}
-              target="_blank"
-            >
-              <PlayIcon className="h-4 w-4" />
-              <span className="text-sm font-medium">Demo</span>
-            </Link>
-          </Button>
           <DashboardButton
             text="Get Started"
             size="sm"
