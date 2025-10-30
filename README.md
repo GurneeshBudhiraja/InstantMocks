@@ -1,12 +1,4 @@
-# Hackathon Submission: InstantMocks
-
-## GitHub handle
-
-@GurneeshBudhiraja
-
-## Project Title
-
-InstantMocks
+# InstantMocks
 
 ## Project Description
 
@@ -18,6 +10,9 @@ InstantMocks
 - 💫 Out of the box support for the different HTTP methods.
 - 🔄 Easily share the created mock APIs with anyone.
 - ⏳ The APIs are ephemeral by nature with a maximum 1 hour validity.
+
+## System Design 
+<img width="720" height="720" alt="diagram-export-10-30-2025-2_45_31-PM" src="https://github.com/user-attachments/assets/ce3d1f8a-f9ab-4f67-a09a-9bc7afcf759d" />
 
 ## Inspiration behind the Project
 
