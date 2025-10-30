@@ -46,7 +46,7 @@
 
 ## Deployed Site URL
 
-[InstantMocks Live URL](https://6903079ef3333df930d1.appwrite.network)
+[InstantMocks Live URL](https://instantmocks.appwrite.network/)
 
 ## Demo Video/Photos
 
