@@ -1,41 +1,41 @@
-"use client";
+'use client';
 
-import { useEffect, useRef } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
   AiBeautifyIcon,
   Edit01Icon,
   Timer01Icon,
   CustomizeIcon,
-} from "hugeicons-react";
+} from 'hugeicons-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const features = [
   {
     icon: AiBeautifyIcon,
-    title: "AI POWERED GENERATION",
+    title: 'AI POWERED GENERATION',
     description:
-      "Instantly create realistic JSON responses using AI for contextually relevant mock data.",
-  },
-  {
-    icon: Edit01Icon,
-    title: "REAL-TIME EDITING",
-    description:
-      "Effortlessly update mock endpoints with instant changes, no redeployment required.",
+      'Instantly create realistic JSON responses using AI for contextually relevant mock data.',
   },
   {
     icon: Timer01Icon,
-    title: "EPHEMERAL APIS",
+    title: 'EPHEMERAL APIS',
     description:
-      "Temporary endpoints that auto-expire to keep environments clean and manageable.",
+      'Temporary endpoints that auto-expire to keep environments clean and manageable.',
+  },
+  {
+    icon: Edit01Icon,
+    title: 'REAL-TIME EDITING',
+    description:
+      'Effortlessly update mock endpoints with instant changes, no redeployment required.',
   },
   {
     icon: CustomizeIcon,
-    title: "CUSTOMIZABLE RESPONSES",
+    title: 'CUSTOMIZABLE RESPONSES',
     description:
-      "Adjust headers, status codes, and response formats for tailored mock data.",
+      'Adjust headers, status codes, and response formats for tailored mock data.',
   },
 ];
 
@@ -54,11 +54,11 @@ export default function FeaturesSection() {
           y: 0,
           opacity: 1,
           duration: 0.4,
-          ease: "power1.out",
+          ease: 'power1.out',
           scrollTrigger: {
             trigger: titleRef.current,
-            start: "top 90%",
-            toggleActions: "play none none none",
+            start: 'top 90%',
+            toggleActions: 'play none none none',
           },
         }
       );
@@ -74,11 +74,11 @@ export default function FeaturesSection() {
               opacity: 1,
               duration: 0.3,
               delay: i * 0.03,
-              ease: "power1.out",
+              ease: 'power1.out',
               scrollTrigger: {
                 trigger: featuresRef.current,
-                start: "top 90%",
-                toggleActions: "play none none none",
+                start: 'top 90%',
+                toggleActions: 'play none none none',
                 once: true,
               },
             }
