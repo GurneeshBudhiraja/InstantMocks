@@ -12,7 +12,8 @@
 - ⏳ The APIs are ephemeral by nature with a maximum 1 hour validity.
 
 ## System Design 
-<img width="720" height="720" alt="diagram-export-10-30-2025-2_45_31-PM" src="https://github.com/user-attachments/assets/ce3d1f8a-f9ab-4f67-a09a-9bc7afcf759d" />
+<img width="750" height="750" alt="updated-diagram" src="https://github.com/user-attachments/assets/710873f9-38df-4c40-a75e-5638d0c2cb72" />
+
 
 ## Inspiration behind the Project
 
